@@ -13,6 +13,7 @@ function Skeleton() {
           setUsers(data);
         } catch (error) {
           console.error('Error fetching users:', error);
+          setLoading(false);
         } finally {
           setLoading(false);
         }
@@ -42,26 +43,27 @@ function Skeleton() {
         <div key={user.id} className="flex items-center justify-between pt-4">
           <div>
             <div>
-              {user.nombre} {user.apellido}
+            <span className='dark:text-white'>{user.nombre} {user.apellido}</span>
             </div>
             <div >
-              {user.username}
+            <span className='dark:text-white'>{user.username}</span>
             </div>
           </div>
           <div >
-          <span>{user.rol.literal}</span>
+          <span className='dark:text-white'>{user.rol.literal}</span>
           </div>
         </div>
       ));
     };
   
     return (
-      <section className="bg-white dark:bg-gray-800 relative shadow-md rounded-lg mx-auto h-auto">
-        <div role="status" className="w-full p-4 space-y-4 divide-y divide-gray-200  dark:divide-gray-700 md:p-6 dark:border-gray-700">
-          {loading ? renderLoadingElements() : renderUsers()}
-        </div>
-      </section>
-    );
+        <section className="bg-white dark:bg-gray-800 relative shadow-md rounded-lg mx-auto h-auto">
+          <div role="status" className="w-full p-4 space-y-4 divide-y divide-gray-200  dark:divide-gray-700 md:p-6 dark:border-gray-700">
+            {loading ? renderLoadingElements() : renderUsers()}
+            <span className="sr-only">Loading...</span>
+          </div>
+        </section>
+      );
   }
   
   export default Skeleton;

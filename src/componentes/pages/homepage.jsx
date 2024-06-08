@@ -4,7 +4,7 @@ import Skeleton from "../layout/skeleton";
 function HomePage() {
   return (
     <Layout>
-      <Skeleton></Skeleton>
+      
     </Layout>
   )
 }

@@ -3,10 +3,11 @@ import Layout from './componentes/layout/layout'
 import { BrowserRouter, Routes, Route, Navigate,useLocation  } from "react-router-dom";
 import {
   HOME,
-  EMPTY
+  EMPTY,
+  USERS_ACT
 } from "./routes/Paths";
 import HomePage from './componentes/pages/homepage'
-
+import UsariosActicvos from './componentes/pages/usuarios/usarios-activos';
 import './App.css'
 import { Button } from 'flowbite-react'
 import { Flowbite } from "flowbite-react";
@@ -19,10 +20,13 @@ function App() {
       <BrowserRouter>
         <Routes>
           {/* Default route */}
-          <Route path={EMPTY} element={<Navigate to={HOME} />} />
+          <Route path={EMPTY} element={<Navigate to={HOME}/>} />
 
           {/* Home page */}
-          <Route path={HOME} element={<HomePage />} />
+          <Route path={HOME} element={<HomePage/>} />
+          {/* Users page */}
+          <Route path={USERS_ACT} element={<UsariosActicvos/>} />
+
         </Routes>
       </BrowserRouter>
     </Flowbite>
