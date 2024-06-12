@@ -1,18 +1,18 @@
 
 "use client";
 
-import React, { useState, useEffect  } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Sidebar } from "flowbite-react";
-import { HiArrowSmRight, HiChartPie, HiInbox, HiShoppingBag, HiTable, HiCog ,HiIdentification  } from "react-icons/hi";
+import { Sidebar } from 'flowbite-react';
+import { HiArrowSmRight, HiChartPie, HiInbox, HiShoppingBag, HiTable, HiCog, HiIdentification } from 'react-icons/hi';
+import { customSidebar } from '../../utils/customThemes';
 
-function sidebarComponent() {
+function SidebarComponent({ isOpen, onToggleSidebar }) {
   const location = useLocation();
-  const [openCollapse, setOpenCollapse] = useState(null); // Guarda el índice del Collapse abierto
-  const [selectedItem, setSelectedItem] = useState(''); // Guarda el href del elemento seleccionado
+  const [openCollapse, setOpenCollapse] = useState(null);
+  const [selectedItem, setSelectedItem] = useState('');
 
   useEffect(() => {
-    // Determina qué collapse debe estar abierto basado en la ruta actual
     if (location.pathname.startsWith('/users')) {
       setOpenCollapse(1);
       setSelectedItem(location.pathname);
@@ -28,86 +28,96 @@ function sidebarComponent() {
   };
 
   const isItemSelected = (href) => {
-    return selectedItem === href ? 'border border-cyan-700' : '';
+
+    return selectedItem.startsWith( href) ? 'border border-cyan-700' : '';
   };
 
   return (
-    <Sidebar aria-label="Sidebar with multi-level dropdown example">
-    <Sidebar.Items>
-      <Sidebar.ItemGroup>
-        <Sidebar.Item href="#" icon={HiChartPie}>
-          Dashboard
-        </Sidebar.Item>
-
-        <Sidebar.Item href="#" icon={HiInbox}>
-          Inbox
-        </Sidebar.Item>
-        <Sidebar.Item href="#" icon={HiShoppingBag}>
-          Products
-        </Sidebar.Item>
-        <Sidebar.Item href="#" icon={HiArrowSmRight}>
-          Sign In
-        </Sidebar.Item>
-        <Sidebar.Item href="#" icon={HiTable}>
-          Sign Up
-        </Sidebar.Item>
-
-        <Sidebar.Collapse
-          icon={HiCog}
-          label="Configuración"
-          open={openCollapse === 2}  // Correcto atributo para abrir el collapse
-          onClick={() => handleCollapseClick(2)}
-        >
-      
-          <Sidebar.Item
-            href="#portadores2"
-            className={isItemSelected('#portadores2')}
-            onClick={() => handleItemClick('#portadores2')}
-          >
-            Portadores Energéticos
+    <Sidebar
+      id="sidebar"
+      theme={customSidebar}
+      aria-label="Sidebar with multi-level dropdown example"
+      className={`transition-transform duration-300 transform ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} fixed md:static top-0 left-0 h-full z-40 border-r border-gray-300 dark:border-gray-700`}
+    >
+      <div className="py-5 block sm:hidden pb-3">
+        <h5 id="sidebar-label" className="text-base font-semibold text-gray-500 uppercase dark:text-gray-400">Menú</h5>
+        <button type="button" onClick={onToggleSidebar} className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 absolute top-2.5 right-2.5 inline-flex items-center justify-center dark:hover:bg-gray-600 dark:hover:text-white">
+          <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"></path>
+          </svg>
+          <span className="sr-only">Close menu</span>
+        </button>
+      </div>
+      <Sidebar.Items>
+        <Sidebar.ItemGroup>
+          <Sidebar.Item href="#" icon={HiChartPie}>
+            Dashboard
           </Sidebar.Item>
-         
-        </Sidebar.Collapse>
-
-        <Sidebar.Collapse
-          icon={HiIdentification}
-          label="Administración"
-          open={openCollapse === 1}  // Correcto atributo para abrir el collapse
-          onClick={() => handleCollapseClick(1)}
-        >
-          <Sidebar.Item
-            href="/users"
-            className={isItemSelected('/users')}
-            onClick={() => handleItemClick('/users')}
-          >
-            Usuarios
+          <Sidebar.Item href="#" icon={HiInbox}>
+            Inbox
           </Sidebar.Item>
-          <Sidebar.Item
-            href="#portadores"
-            className={isItemSelected('#portadores')}
-            onClick={() => handleItemClick('#portadores')}
-          >
-            Portadores Energéticos
+          <Sidebar.Item href="#" icon={HiShoppingBag}>
+            Products
           </Sidebar.Item>
-          <Sidebar.Item
-            href="#refunds"
-            className={isItemSelected('#refunds')}
-            onClick={() => handleItemClick('#refunds')}
-          >
-            Refunds
+          <Sidebar.Item href="#" icon={HiArrowSmRight}>
+            Sign In
           </Sidebar.Item>
-          <Sidebar.Item
-            href="#shipping"
-            className={isItemSelected('#shipping')}
-            onClick={() => handleItemClick('#shipping')}
-          >
-            Shipping
+          <Sidebar.Item href="#" icon={HiTable}>
+            Sign Up
           </Sidebar.Item>
-        </Sidebar.Collapse>
-      </Sidebar.ItemGroup>
-    </Sidebar.Items>
-  </Sidebar>
+          <Sidebar.Collapse
+            icon={HiCog}
+            label="Configuración"
+            open={openCollapse === 2}
+            onClick={() => handleCollapseClick(2)}
+          >
+            <Sidebar.Item
+              href="#portadores2"
+              className={isItemSelected('#portadores2')}
+              onClick={() => handleItemClick('#portadores2')}
+            >
+              Portadores Energéticos
+            </Sidebar.Item>
+          </Sidebar.Collapse>
+          <Sidebar.Collapse
+            icon={HiIdentification}
+            label="Administración"
+            open={openCollapse === 1}
+            onClick={() => handleCollapseClick(1)}
+          >
+            <Sidebar.Item
+              href="/users"
+              className={isItemSelected('/users')}
+              onClick={() => handleItemClick('/users')}
+            >
+              Usuarios
+            </Sidebar.Item>
+            <Sidebar.Item
+              href="#portadores"
+              className={isItemSelected('#portadores')}
+              onClick={() => handleItemClick('#portadores')}
+            >
+              Portadores Energéticos
+            </Sidebar.Item>
+            <Sidebar.Item
+              href="#refunds"
+              className={isItemSelected('#refunds')}
+              onClick={() => handleItemClick('#refunds')}
+            >
+              Refunds
+            </Sidebar.Item>
+            <Sidebar.Item
+              href="#shipping"
+              className={isItemSelected('#shipping')}
+              onClick={() => handleItemClick('#shipping')}
+            >
+              Shipping
+            </Sidebar.Item>
+          </Sidebar.Collapse>
+        </Sidebar.ItemGroup>
+      </Sidebar.Items>
+    </Sidebar>
   );
 }
 
-export default sidebarComponent;
+export default SidebarComponent;

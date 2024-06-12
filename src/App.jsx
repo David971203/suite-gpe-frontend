@@ -4,10 +4,12 @@ import { BrowserRouter, Routes, Route, Navigate,useLocation  } from "react-route
 import {
   HOME,
   EMPTY,
-  USERS_ACT
+  USERS_ACT,
+  USERS_INACT
 } from "./routes/Paths";
 import HomePage from './componentes/pages/homepage'
 import UsariosActicvos from './componentes/pages/usuarios/usarios-activos';
+import UsariosInacticvos from './componentes/pages/usuarios/usuarios-inactivos';
 import './App.css'
 import { Button } from 'flowbite-react'
 import { Flowbite } from "flowbite-react";
@@ -26,6 +28,7 @@ function App() {
           <Route path={HOME} element={<HomePage/>} />
           {/* Users page */}
           <Route path={USERS_ACT} element={<UsariosActicvos/>} />
+          <Route path={USERS_INACT} element={<UsariosInacticvos/>} />
 
         </Routes>
       </BrowserRouter>

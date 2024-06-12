@@ -11,7 +11,7 @@ export const renderWithTooltip = (rowData, field) => {
     if (typeof value === 'string' && value.length > 15) {
       return (
         <Tooltip content={value} placement="top">
-          <span>{value.substring(0, 15) + '...'}</span>
+          {value.substring(0, 15) + '...'}
         </Tooltip>
       );
     }
