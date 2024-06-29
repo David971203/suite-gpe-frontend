@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom';
 import { Sidebar } from 'flowbite-react';
 import { HiArrowSmRight, HiChartPie, HiInbox, HiShoppingBag, HiTable, HiCog, HiIdentification } from 'react-icons/hi';
 import { customSidebar } from '../../utils/customThemes';
+import {jwtDecode} from 'jwt-decode';
 
 function SidebarComponent({ isOpen, onToggleSidebar }) {
   const location = useLocation();
@@ -14,6 +15,13 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
 
   useEffect(() => {
     if (location.pathname.startsWith('/users')) {
+      setOpenCollapse(1);
+      setSelectedItem(location.pathname);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/portadores')) {
       setOpenCollapse(1);
       setSelectedItem(location.pathname);
     }
@@ -31,6 +39,9 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
 
     return selectedItem.startsWith( href) ? 'border border-cyan-700' : '';
   };
+  const token = localStorage.getItem('token');
+  const decodedToken = jwtDecode(token);
+  const rol = decodedToken.role
 
   return (
     <Sidebar
@@ -51,7 +62,7 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
       <Sidebar.Items>
         <Sidebar.ItemGroup>
           <Sidebar.Item href="#" icon={HiChartPie}>
-            Dashboard
+            Dashboard {rol}
           </Sidebar.Item>
           <Sidebar.Item href="#" icon={HiInbox}>
             Inbox
@@ -93,9 +104,9 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
               Usuarios
             </Sidebar.Item>
             <Sidebar.Item
-              href="#portadores"
-              className={isItemSelected('#portadores')}
-              onClick={() => handleItemClick('#portadores')}
+               href="/portadores"
+              className={isItemSelected('/portadores')}
+              onClick={() => handleItemClick('/portadores')}
             >
               Portadores Energéticos
             </Sidebar.Item>

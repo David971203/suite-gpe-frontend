@@ -1,11 +1,13 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useContext} from 'react';
+import { AuthContext } from '../../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { apiUrl } from '../../../utils/apiUrl';
 import { renderWithTooltip } from '../../../utils/renderWithTooltip';
 import { TextInput } from "flowbite-react";
 import { Tooltip,Toast } from 'flowbite-react';
-import { HiOutlineSearch, HiRefresh ,HiOutlineArrowNarrowLeft,HiOutlineExclamationCircle,HiCheck} from "react-icons/hi";
+import { HiOutlineSearch, HiRefresh ,HiOutlineArrowNarrowLeft,HiOutlineExclamationCircle,HiCheck,HiX} from "react-icons/hi";
 import Layout from "../../layout/layout";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -18,7 +20,7 @@ import '../styles.css'
 //import "primereact/resources/themes/tailwind-light/theme.css";
 
 
-function UsariosInacticvos() {
+function UsariosInactivos() {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
@@ -33,8 +35,11 @@ function UsariosInacticvos() {
 
     const [openModal, setOpenModal] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState(null);
-    const [showToast, setShowToast] = useState(false);
+    const [showToastSUCC, setShowToastSUCC] = useState(false);
+    const [showToastERR, setShowToastERR] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
+    const { logout } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const actionBodyTemplate = (rowData) => {
       return (
@@ -56,20 +61,40 @@ function UsariosInacticvos() {
     };
 
     const confirmActivar = () => {
-        axios.put(`${apiUrl}/user/estado/${selectedUserId}`, { estado: "Activo" })
+      const token = localStorage.getItem('token');
+        axios.put(`${apiUrl}/user/estado/${selectedUserId}`, { estado: "Activo" },{
+          headers: {
+              'Authorization': `Bearer ${token}` // Incluir el token en los encabezados
+          }
+      })
             .then(response => {
                 setUsers(users.filter(user => user.id !== selectedUserId));
                 setOpenModal(false);
                 setToastMessage(response.data.message);
-                setShowToast(true); // Mostrar Toast
-                setTimeout(() => setShowToast(false), 5000);
+                setShowToastSUCC(true); // Mostrar Toast
+                setTimeout(() => setShowToastSUCC(false), 5000);
             })
             .catch(error => {
                 setOpenModal(false);
-              setToastMessage('error');
-              setShowToast(true); // Mostrar Toast
-              setTimeout(() => setShowToast(false), 5000); 
-                console.error("There was an error updating the user state!", error);
+                          
+                if (error.response.data.detail === 'Could not validate credentials') {
+                  setToastMessage('Su sesión ha expirado, por favor ingrese de nuevo');
+                  setShowToastERR(true); // Mostrar Toast
+                  setTimeout(() => setShowToastERR(false), 5000); 
+                  setTimeout(() => {
+                      setShowToastERR(false);
+                      if (error.response.data.detail === 'Could not validate credentials') {
+                        // Token inválido o expirado, redirigir a la página de inicio de sesión
+                        localStorage.setItem('rol', '');
+                        logout();
+                        navigate('/login');
+                      }
+                    }, 3000);
+                  }else{
+                      setToastMessage(error.response.data.detail);
+                      setShowToastERR(true); // Mostrar Toast
+                      setTimeout(() => setShowToastERR(false), 5000); 
+                  }
             });
     };
 
@@ -96,15 +121,47 @@ function UsariosInacticvos() {
     const header = renderHeader();
 
   useEffect(() => {
-    axios.get(apiUrl+'/users')
+    const token = localStorage.getItem('token');
+    axios.get(apiUrl+'/users',{
+      headers: {
+          'Authorization': `Bearer ${token}` // Incluir el token en los encabezados
+      }
+    })
       .then(response => {
         setUsers(response.data);
         setLoading(false);
       })
       .catch(error => {
-        console.error("There was an error fetching the users!", error);
-        setLoading(false);
-      });
+            if (error.response.data.detail === 'Could not validate credentials') {
+              setToastMessage('Su sesión ha expirado, por favor ingrese de nuevo');
+              setShowToastERR(true); // Mostrar Toast
+              setTimeout(() => setShowToastERR(false), 5000); 
+              setTimeout(() => {
+                  setShowToastERR(false);
+                  if (error.response.data.detail === 'Could not validate credentials') {
+                  // Token inválido o expirado, redirigir a la página de inicio de sesión
+                  localStorage.setItem('rol', '');
+                  logout();
+                  navigate('/login');
+                  }
+              }, 3000); // 2 segundos de retraso antes de la redirección
+              setLoading(false);
+          }else{
+              setToastMessage(error.response.data.detail);
+              setShowToastERR(true); // Mostrar Toast
+              setTimeout(() => setShowToastERR(false), 5000);
+              setTimeout(() => {
+                  setShowToastERR(false);
+                  if (error.response.data.detail === 'No tiene permisos para acceder a esta ruta') {
+                  // Token inválido o expirado, redirigir a la página de inicio de sesión
+                  
+                  navigate('/');
+                  }
+              }, 3000); 
+              
+              setLoading(false);
+          }
+        });
   }, []);
 
   const inactiveUsers = users.filter(user => user.estado === 'Inactivo');
@@ -186,11 +243,22 @@ function UsariosInacticvos() {
                 {content}
                 
             </div>
-            {showToast && (
+            {showToastSUCC && (
                     <div className="absolute  top-4 right-4">
                         <Toast>
                             <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
                             <HiCheck className="h-5 w-5" />
+                            </div>
+                            <div className="ml-3 text-sm font-normal">{toastMessage}</div>
+                            <Toast.Toggle />
+                        </Toast>
+                    </div>
+                )}
+                {showToastERR && (
+                    <div className="absolute  top-4 right-4">
+                        <Toast>
+                            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
+                                <HiX className="h-5 w-5" />
                             </div>
                             <div className="ml-3 text-sm font-normal">{toastMessage}</div>
                             <Toast.Toggle />
@@ -221,4 +289,4 @@ function UsariosInacticvos() {
       );
   }
   
-  export default UsariosInacticvos;
+  export default UsariosInactivos;

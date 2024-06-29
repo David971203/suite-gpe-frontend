@@ -14,10 +14,10 @@ function Layout({ children }) {
       {/* Navbar */}
       <Navbar onToggleSidebar={toggleSidebar} showToggle={true} />
 
-      <div className="flex h-full">
+      <div className="flex h-full w-full">
         <Sidebar isOpen={sidebarIsOpen} onToggleSidebar={toggleSidebar} />
         
-        <main className="flex-1 p-4 bg-gray-100 dark:bg-gray-900 overflow-auto">
+        <main className="flex-1 p-4 bg-gray-100 dark:bg-gray-900 overflow-scroll">
           {children}
         </main>
       </div>

@@ -3,8 +3,19 @@ import Layout from "../layout/layout";
 import Skeleton from "../layout/skeleton";
 import fotoFront  from "../../img/image-4.jpg";
 import { Card } from "flowbite-react";
+import {jwtDecode} from 'jwt-decode';
 
 function HomePage() {
+  const token = localStorage.getItem('token'); // Obtén el token desde donde lo almacenes
+if (token) {
+  try {
+    const decodedToken = jwtDecode(token);
+    console.log(decodedToken.role); // Aquí puedes ver el contenido del token decodificado
+  } catch (error) {
+    console.error('Error decoding token:', error);
+  }
+}
+
   return (
     <Layout>
       <div class="grid gap-4 grid-cols-2">

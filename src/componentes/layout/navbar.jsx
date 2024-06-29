@@ -1,15 +1,53 @@
 
 "use client";
 
-import React from 'react';
+import React, { useContext,useEffect,useState } from 'react';
+import axios from 'axios';
+import { apiUrl } from '../../utils/apiUrl';
 import { Avatar, Dropdown, Navbar } from 'flowbite-react';
+import { Tooltip ,Toast } from 'flowbite-react';
+import {HiX,HiCheck} from "react-icons/hi";
 import { DarkThemeToggle } from 'flowbite-react';
 import BreadCrumb from './breadcrumb';
 import logo from '../../img/barrelr-energy-factory-svgrepo-com.svg';
 import avatar from '../../img/img_avatar1.png';
 import { HiMenu } from 'react-icons/hi';
+import { AuthContext } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 function NavbarComponent({ showToggle, onToggleSidebar }) {
+
+  
+  const { logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+  const [nombre, setNombre] = useState('');
+  const [user, setUser] = useState('');
+
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    axios.get(apiUrl + '/users/me', {
+        headers: {
+            'Authorization': `Bearer ${token}` // Incluir el token en los encabezados
+        }
+    })
+        .then(response => {
+            
+            setNombre(response.data.nombre);
+            setUser(response.data.username);
+        })
+        .catch(error => {
+            console.log(error);
+            
+          }); 
+}, []);
+
+    
   return (
     <Navbar className="border-b border-gray-300 dark:border-gray-700">
       {showToggle &&
@@ -28,24 +66,28 @@ function NavbarComponent({ showToggle, onToggleSidebar }) {
       </Navbar.Brand>
       <BreadCrumb />
       <div className="flex md:order-2">
-        <DarkThemeToggle className="mx-2" />
+      <Tooltip content='Modo oscuro' placement="top">
+          
+          <DarkThemeToggle className="mx-2" />
+        </Tooltip>
+        
         <Dropdown
           arrowIcon={false}
           inline
           label={<Avatar className="w-10 h-10 rounded-full cursor-pointer" alt="User settings" img={avatar} rounded />}
         >
           <Dropdown.Header>
-            <span className="block text-sm">Bonnie Green</span>
-            <span className="block truncate text-sm font-medium">name@flowbite.com</span>
+            <span className="block text-sm">{nombre}</span>
+            <span className="block truncate text-sm font-medium">{user}</span>
           </Dropdown.Header>
-          <Dropdown.Item>Dashboard</Dropdown.Item>
-          <Dropdown.Item>Settings</Dropdown.Item>
-          <Dropdown.Item>Earnings</Dropdown.Item>
+          <Dropdown.Item>Ver Perfil</Dropdown.Item>
+          <Dropdown.Item>Cambiar Contraseña</Dropdown.Item>
           <Dropdown.Divider />
-          <Dropdown.Item>Sign out</Dropdown.Item>
+          <Dropdown.Item onClick={handleLogout}>Cerrar Sesión</Dropdown.Item>
         </Dropdown>
       </div>
     </Navbar>
+    
   );
 }
 

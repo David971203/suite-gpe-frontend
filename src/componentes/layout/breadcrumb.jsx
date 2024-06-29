@@ -26,7 +26,7 @@ function BreadCrumbComponent() {
           <Breadcrumb.Item href="/users">Usuarios</Breadcrumb.Item>
         </Breadcrumb>
       );
-      case '/users/inactive':
+    case '/users/inactive':
       return (
         <Breadcrumb aria-label="Default breadcrumb example">
           <Breadcrumb.Item href="/" icon={HiHome}>
@@ -36,6 +36,25 @@ function BreadCrumbComponent() {
           <Breadcrumb.Item href="/users/inactive">Inactivos</Breadcrumb.Item>
         </Breadcrumb>
       );
+    case '/portadores':
+      return (
+        <Breadcrumb aria-label="Default breadcrumb example">
+          <Breadcrumb.Item href="/" icon={HiHome}>
+            Inicio
+          </Breadcrumb.Item>
+          <Breadcrumb.Item href="/portadores">Portadores Energéticos</Breadcrumb.Item>
+        </Breadcrumb>
+      );
+      case '/portadores/inactive':
+        return (
+          <Breadcrumb aria-label="Default breadcrumb example">
+            <Breadcrumb.Item href="/" icon={HiHome}>
+              Inicio
+            </Breadcrumb.Item>
+            <Breadcrumb.Item href="/portadores">Portadores Energéticos</Breadcrumb.Item>
+            <Breadcrumb.Item href="/portadores/inactive">Inactivos</Breadcrumb.Item>
+          </Breadcrumb>
+        );  
     default:
       return (
         <Breadcrumb aria-label="Default breadcrumb example">

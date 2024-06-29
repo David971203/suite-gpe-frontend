@@ -1,11 +1,14 @@
 "use client";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+import { AuthContext } from '../../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { apiUrl } from '../../../utils/apiUrl';
 import { renderWithTooltip } from '../../../utils/renderWithTooltip';
 import { TextInput } from "flowbite-react";
+import { Label, Select} from 'flowbite-react';
 import { Tooltip ,Toast } from 'flowbite-react';
-import { HiOutlineSearch, HiPencil, HiTrash,HiOutlineArrowNarrowRight,HiOutlinePlus,HiOutlineExclamationCircle,HiX  } from "react-icons/hi";
+import { HiOutlineSearch, HiPencil, HiTrash,HiOutlineArrowNarrowRight,HiOutlinePlus,HiOutlineExclamationCircle,HiX,HiCheck} from "react-icons/hi";
 import Layout from "../../layout/layout";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -15,60 +18,351 @@ import { FilterMatchMode } from 'primereact/api';
 import 'flowbite/dist/flowbite.css';
 import '../styles.css';
 
-function UsariosActicvos() {
+function UsariosActivos() {
+  
+
     const [users, setUsers] = useState([]);
+    const [user, setUser] = useState([]);
+    
     const [loading, setLoading] = useState(true);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        nombre: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-        apellido: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-        username: { value: null, matchMode: FilterMatchMode.IN },
-        'rol.literal': { value: null, matchMode: FilterMatchMode.EQUALS }
     });
     const [openModal, setOpenModal] = useState(false);
+    const [openNewModal, setOpenNewModal] = useState(false);
+    const [openEdtModal, setOpenEdtModal] = useState(false);
+    const [roles, setRoles] = useState([]);
+    const [formData, setFormData] = useState({
+        nombre: '',
+        apellido: '',
+        username: '',
+        hashed_password: '',
+        confirm_password: '',
+        estado: 'Activo',
+        rol_id: ''
+      });
     const [selectedUserId, setSelectedUserId] = useState(null);
-    const [showToast, setShowToast] = useState(false);
+    const [showToastSUCC, setShowToastSUCC] = useState(false);
+    const [showToastERR, setShowToastERR] = useState(false);
     const [toastMessage, setToastMessage] = useState('');
-
-    const actionBodyTemplate = (rowData) => {
-      return (
-          <React.Fragment>
-            <div className="flex flex-wrap gap-2">
-              <Tooltip content="Editar" placement="top">
-                <HiPencil className="h-6 w-6 cursor-pointer" />
-              </Tooltip>
-              {rowData.username !== 'admin' && (
-                <Tooltip content="Eliminar" placement="top">
-                  <HiTrash onClick={() => handleDeleteClick(rowData.id)} className="h-6 w-6 cursor-pointer" />
-                </Tooltip>
-              )}
-            </div>
-          </React.Fragment>
-      );
+    const [colorInputText, setcolorInputText] = useState('gray');
+    const [msgInputText, setmsgInputText] = useState('');
+    const { logout } = useContext(AuthContext);
+    const navigate = useNavigate();
+   
+    const resetFormData = () => {
+        setFormData({
+            nombre: '',
+            apellido: '',
+            username: '',
+            hashed_password: '',
+            confirm_password: '',
+            estado: 'Activo',
+            rol_id: ''
+        });
     };
 
+
+    //Add
+          
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        axios.get(`${apiUrl}/rols`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => setRoles(response.data))
+        .catch(error => console.error("Error fetching roles:", error));
+    }, []);
+
+    const validatePassword = (password) => {
+        const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$/;
+        return regex.test(password);
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        if (formData.hashed_password !== formData.confirm_password) {
+            setcolorInputText('failure');
+            setmsgInputText('Las contraseñas no coinciden!!');
+            
+            setTimeout(() => {
+                setShowToastERR(false);
+                setcolorInputText('gray');
+                setmsgInputText('');
+            }
+            , 5000);
+            
+            return;
+        }
+
+        if (!validatePassword(formData.hashed_password)) {
+            setcolorInputText('failure');
+            setmsgInputText('La contraseña debe tener al menos 8 caracteres, una letra mayúscula, un número y un caracter especial!!');
+            
+            setTimeout(() => {
+                setShowToastERR(false);
+                setcolorInputText('gray');
+                setmsgInputText('');
+            }, 5000);
+            return;
+        }
+
+        const token = localStorage.getItem('token');
+        axios.post(`${apiUrl}/user`, {
+            nombre: formData.nombre,
+            apellido: formData.apellido,
+            username: formData.username,
+            hashed_password: formData.hashed_password,
+            estado: formData.estado,
+            rol_id: formData.rol_id
+        }, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => {
+            setUsers([, response.data.user,...users]);
+            setToastMessage(response.data.message);
+            setShowToastSUCC(true);
+            setTimeout(() => setShowToastSUCC(false), 5000);
+            setOpenNewModal(false);
+            resetFormData();
+        })
+        .catch(error => {
+            setOpenNewModal(false);
+            resetFormData();
+            if (error.response.data.detail === 'Could not validate credentials') {
+                setToastMessage('Su sesión ha expirado, por favor ingrese de nuevo');
+                setShowToastERR(true);
+                setTimeout(() => {
+                    setShowToastERR(false);
+                    localStorage.setItem('rol', '');
+                    logout();
+                    navigate('/login');
+                }, 3000);
+            } else {
+                setToastMessage(error.response.data.detail);
+                setShowToastERR(true);
+                setTimeout(() => setShowToastERR(false), 5000);
+            }
+        });
+    };
+
+    // Edt
+    const openModalWithUserData = (userId) => {
+        
+        setSelectedUserId(userId);
+        fetchUserData(userId);
+        setOpenEdtModal(true);
+        
+    };
+    useEffect(() => {
+        if (selectedUserId !== null) {
+            fetchUserData(selectedUserId);
+        }
+    }, [selectedUserId]);
+
+    const fetchUserData = async (selectedUserId) => {
+        const token = localStorage.getItem('token'); // Obtener el token del almacenamiento local
+        
+        await axios.get(`${apiUrl}/user/${selectedUserId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}` // Incluir el token en los encabezados
+            }
+        })
+            .then(response => {
+                
+                setFormData({
+                    nombre: response.data.nombre,
+                    apellido: response.data.apellido,
+                    username: response.data.username,
+                    hashed_password: '',
+                    confirm_password: '',
+                    estado: response.data.estado,
+                    rol_id: response.data.rol_id
+                });
+                
+            })
+            .catch(error => {
+              
+              if (error.response.data.detail === 'Could not validate credentials') {
+                setToastMessage('Su sesión ha expirado, por favor ingrese de nuevo');
+                setShowToastERR(true); // Mostrar Toast
+                setTimeout(() => setShowToastERR(false), 5000); 
+                setTimeout(() => {
+                    setShowToastERR(false);
+                    if (error.response.data.detail === 'Could not validate credentials') {
+                      // Token inválido o expirado, redirigir a la página de inicio de sesión
+                      localStorage.setItem('rol', '');
+                      logout();
+                      navigate('/login');
+                    }
+                  }, 3000);
+                }else{
+                    setToastMessage(error.response.data.detail);
+                    setShowToastERR(true); // Mostrar Toast
+                    setTimeout(() => setShowToastERR(false), 5000); 
+                }
+            
+            // 2 segundos de retraso antes de la redirección
+             
+            });
+    };
+
+    const handleEdtSubmit = (e) => {
+        e.preventDefault();
+
+        if(formData.hashed_password !== '' || formData.confirm_password !== ''){
+            if (formData.hashed_password !== formData.confirm_password) {
+                setcolorInputText('failure');
+                setmsgInputText('Las contraseñas no coinciden!!');
+                
+                setTimeout(() => {
+                    setShowToastERR(false);
+                    setcolorInputText('gray');
+                    setmsgInputText('');
+                }
+                , 5000);
+                
+                return;
+            }
+    
+            if (!validatePassword(formData.hashed_password)) {
+                setcolorInputText('failure');
+                setmsgInputText('La contraseña debe tener al menos 8 caracteres, una letra mayúscula, un número y un caracter especial!!');
+                
+                setTimeout(() => {
+                    setShowToastERR(false);
+                    setcolorInputText('gray');
+                    setmsgInputText('');
+                }, 5000);
+                return;
+            }
+        }
+        
+
+        const token = localStorage.getItem('token');
+        axios.put(`${apiUrl}/user/${selectedUserId}`, {
+            nombre: formData.nombre,
+            apellido: formData.apellido,
+            username: formData.username,
+            hashed_password: formData.hashed_password,
+            estado: formData.estado,
+            rol_id: formData.rol_id
+        }, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => {
+            setUsers((prevUsers) => 
+                prevUsers.map(user => user.id === selectedUserId ? response.data.user : user)
+            );
+            setToastMessage(response.data.message);
+            setShowToastSUCC(true);
+            setTimeout(() => setShowToastSUCC(false), 5000);
+            setOpenEdtModal(false);
+            resetFormData();
+        })
+        .catch(error => {
+            setOpenEdtModal(false);
+            resetFormData();
+            if (error.response.data.detail === 'Could not validate credentials') {
+                setToastMessage('Su sesión ha expirado, por favor ingrese de nuevo');
+                setShowToastERR(true);
+                setTimeout(() => {
+                    setShowToastERR(false);
+                    localStorage.setItem('rol', '');
+                    logout();
+                    navigate('/login');
+                }, 3000);
+            } else {
+                setToastMessage(error.response.data.detail);
+                setShowToastERR(true);
+                setTimeout(() => setShowToastERR(false), 5000);
+            }
+        });
+    };
+
+    
+
+    //Delete
     const handleDeleteClick = (userId) => {
         setSelectedUserId(userId);
         setOpenModal(true);
     };
 
     const confirmDelete = () => {
-        axios.put(`${apiUrl}/user/estado/${selectedUserId}`, { estado: "Inactivo" })
+        const token = localStorage.getItem('token'); // Obtener el token del almacenamiento local
+
+        axios.put(`${apiUrl}/user/estado/${selectedUserId}`, { estado: "Inactivo" }, {
+            headers: {
+                'Authorization': `Bearer ${token}` // Incluir el token en los encabezados
+            }
+        })
             .then(response => {
                 setUsers(users.filter(user => user.id !== selectedUserId));
                 setOpenModal(false);
                 setToastMessage(response.data.message);
-                setShowToast(true); // Mostrar Toast
-                setTimeout(() => setShowToast(false), 5000);
+                setShowToastERR(true); // Mostrar Toast
+                setTimeout(() => setShowToastERR(false), 5000);
             })
             .catch(error => {
               setOpenModal(false);
-              setToastMessage('El usuario ha sido eliminado exitosamente');
-              setShowToast(true); // Mostrar Toast
-              setTimeout(() => setShowToast(false), 5000); 
-                console.error("There was an error updating the user state!", error);
+              
+              if (error.response.data.detail === 'Could not validate credentials') {
+                setToastMessage('Su sesión ha expirado, por favor ingrese de nuevo');
+                setShowToastERR(true); // Mostrar Toast
+                setTimeout(() => setShowToastERR(false), 5000); 
+                setTimeout(() => {
+                    setShowToastERR(false);
+                    if (error.response.data.detail === 'Could not validate credentials') {
+                      // Token inválido o expirado, redirigir a la página de inicio de sesión
+                      localStorage.setItem('rol', '');
+                      logout();
+                      navigate('/login');
+                    }
+                  }, 3000);
+                }else{
+                    setToastMessage(error.response.data.detail);
+                    setShowToastERR(true); // Mostrar Toast
+                    setTimeout(() => setShowToastERR(false), 5000); 
+                }
+            
+            // 2 segundos de retraso antes de la redirección
+             
             });
+    };
+    //Delete
+
+    //Tabla
+
+    const actionBodyTemplate = (rowData) => {
+        
+        
+        return (
+            <React.Fragment>
+              <div className="flex flex-wrap gap-2">
+                <Tooltip content="Editar" placement="top">
+                  <HiPencil onClick={() => {openModalWithUserData(rowData.id),setUser(rowData.username);}} className="h-6 w-6 cursor-pointer" />
+                </Tooltip>
+                {rowData.username !== 'admin' && (
+                  <Tooltip content="Eliminar" placement="top">
+                    <HiTrash onClick={() => handleDeleteClick(rowData.id)} className="h-6 w-6 cursor-pointer" />
+                  </Tooltip>
+                )}
+              </div>
+            </React.Fragment>
+        );
     };
 
     const onGlobalFilterChange = (e) => {
@@ -90,14 +384,49 @@ function UsariosActicvos() {
     const header = renderHeader();
 
     useEffect(() => {
-        axios.get(apiUrl + '/users')
+        const token = localStorage.getItem('token');
+        axios.get(apiUrl + '/users', {
+            headers: {
+                'Authorization': `Bearer ${token}` // Incluir el token en los encabezados
+            }
+        })
             .then(response => {
-                setUsers(response.data);
+                const sortedUsers = response.data.sort((a, b) => b.id - a.id);
+                setUsers(sortedUsers);
                 setLoading(false);
             })
             .catch(error => {
-                console.error("There was an error fetching the users!", error);
-                setLoading(false);
+                if (error.response.data.detail === 'Could not validate credentials') {
+                    setToastMessage('Su sesión ha expirado, por favor ingrese de nuevo');
+                    setShowToastERR(true); // Mostrar Toast
+                    setTimeout(() => setShowToastERR(false), 5000); 
+                    setTimeout(() => {
+                        setShowToastERR(false);
+                        if (error.response.data.detail === 'Could not validate credentials') {
+                        // Token inválido o expirado, redirigir a la página de inicio de sesión
+                        localStorage.setItem('rol', '');
+                        logout();
+                        navigate('/login');
+                        }
+                    }, 3000); // 2 segundos de retraso antes de la redirección
+                    setLoading(false);
+                }else{
+                    setToastMessage(error.response.data.detail);
+                    setShowToastERR(true); // Mostrar Toast
+                    setTimeout(() => setShowToastERR(false), 5000);
+                    setTimeout(() => {
+                        setShowToastERR(false);
+                        if (error.response.data.detail === 'No tiene permisos para acceder a esta ruta') {
+                        // Token inválido o expirado, redirigir a la página de inicio de sesión
+                        
+                        navigate('/');
+                        }
+                    }, 3000); 
+                    
+                    setLoading(false);
+                }
+                
+                
             });
     }, []);
 
@@ -122,10 +451,10 @@ function UsariosActicvos() {
 
     const renderUsers = () => {
         return (
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto h-auto px-4">
                 <h5 className="text-2xl font-bold text-cyan-700 dark:text-white">Usuarios</h5>
                 <br />
-                <Button className='mb-2'>Nuevo Usuario <HiOutlinePlus className="ml-2 h-5 w-5" /></Button>
+                <Button onClick={() => setOpenNewModal(true)} className='mb-2'>Nuevo Usuario <HiOutlinePlus className="ml-2 h-5 w-5"  /></Button>
                 <DataTable value={activeUsers}
                     paginator
                     rows={5}
@@ -142,7 +471,7 @@ function UsariosActicvos() {
                     <Column field="rol.literal" header="ROL" body={(rowData) => renderWithTooltip(rowData, 'rol.literal')} className="p-col text-sm font-medium text-gray-900 px-6 py-4"></Column>
                     <Column body={actionBodyTemplate} header="ACCIONES" className="p-col text-sm font-medium text-gray-900 px-6 py-4"></Column>
                 </DataTable>
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap  gap-2">
                     <Button>Usuarios Activos: {activeUsersCount}</Button>
                     <Button href='/users/inactive'>Ver Usuarios Inactivos <HiOutlineArrowNarrowRight className="ml-2 h-5 w-5" /></Button>
                 </div>
@@ -160,7 +489,9 @@ function UsariosActicvos() {
             </PrimeReactProvider>
         );
     }
-
+    //Tabla
+    
+    
     return (
         <Layout>
             <section className="bg-white dark:bg-gray-800 relative shadow-md rounded-lg mx-auto h-auto">
@@ -168,7 +499,18 @@ function UsariosActicvos() {
                 <div role="status" className="w-full p-4 space-y-4 divide-y divide-gray-200 dark:divide-gray-700 md:p-6 dark:border-gray-700">
                     {content}
                 </div>
-                {showToast && (
+                {showToastSUCC && (
+                    <div className="absolute  top-4 right-4">
+                        <Toast>
+                            <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
+                            <HiCheck className="h-5 w-5" />
+                            </div>
+                            <div className="ml-3 text-sm font-normal">{toastMessage}</div>
+                            <Toast.Toggle />
+                        </Toast>
+                    </div>
+                )}
+                {showToastERR && (
                     <div className="absolute  top-4 right-4">
                         <Toast>
                             <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
@@ -179,6 +521,119 @@ function UsariosActicvos() {
                         </Toast>
                     </div>
                 )}
+
+                <Modal show={openNewModal}  size='md'onClose={() => {setOpenNewModal(false); resetFormData();}}>
+                    <Modal.Header onClose={() => { setOpenNewModal(false); resetFormData(); }}>
+                        Nuevo Usuario
+                    </Modal.Header>
+                    <Modal.Body>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <Label htmlFor="nombre">Nombre</Label>
+                                <TextInput id="nombre" name="nombre" maxLength={30} value={formData.nombre} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa tu nombre.')} onInput={(e) => e.target.setCustomValidity('')}/>
+                            </div>
+                            <div>
+                                <Label htmlFor="apellido">Apellido</Label>
+                                <TextInput id="apellido" name="apellido" maxLength={30} value={formData.apellido} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa tu apellido.')} onInput={(e) => e.target.setCustomValidity('')}/>
+                            </div>
+                            <div>
+                                <Label htmlFor="username">Nombre de Usuario</Label>
+                                <TextInput id="username" name="username" minLength={5} maxLength={30} value={formData.username} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa tu usuario debe de tener de 5 a 30 caracteres.')} onInput={(e) => e.target.setCustomValidity('')}/>
+                            </div>
+                            <div>
+                                <Label htmlFor="hashed_password">Contraseña</Label>
+                                <TextInput id="hashed_password" name="hashed_password" color={colorInputText} minLength={8} maxLength={16} type="password" value={formData.hashed_password} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa tu contraseña debe de tener de 8 a 16 caracteres.')} onInput={(e) => e.target.setCustomValidity('')}/>
+                            </div>
+                            <div>
+                                <Label htmlFor="confirm_password">Confirmar Contraseña</Label>
+                                <TextInput id="confirm_password" name="confirm_password" color={colorInputText}
+                                    helperText={
+                                        <>
+                                            <p>{msgInputText}</p> 
+                                        </>
+                                    } 
+                                    minLength={8} maxLength={16} type="password" value={formData.confirm_password} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, confirma tu contraseña debe de tener de 8 a 16 caracteres.')} onInput={(e) => e.target.setCustomValidity('')}/>
+                            </div>
+                            <div>
+                                <Label htmlFor="rol_id">Rol</Label>
+                                <Select id="rol_id" name="rol_id" value={formData.rol_id} onChange={handleInputChange} required  onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
+                                    <option value="">-Seleccione un rol-</option>
+                                    {roles.map(rol => (
+                                        <option key={rol.id} value={rol.id}>{rol.literal}</option>
+                                    ))}
+                                </Select>
+                            </div>
+                            <Button type="submit">Guardar</Button>
+                        </form>
+                    </Modal.Body>
+                </Modal>
+
+                
+                <Modal show={openEdtModal}  size='md'onClose={() => {setOpenEdtModal(false); resetFormData();}}>
+                    <Modal.Header onClose={() => { setOpenEdtModal(false); resetFormData(); }}>
+                        Editar Usuario
+                    </Modal.Header>
+                    <Modal.Body>
+                        <form onSubmit={handleEdtSubmit} className="space-y-4">
+                            <div>
+                                <Label htmlFor="nombre">Nombre</Label>
+                                <TextInput id="nombre" name="nombre" maxLength={30} value={formData.nombre} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa tu nombre.')} onInput={(e) => e.target.setCustomValidity('')}/>
+                            </div>
+                            <div>
+                                <Label htmlFor="apellido">Apellido</Label>
+                                <TextInput id="apellido" name="apellido" maxLength={30} value={formData.apellido} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa tu apellido.')} onInput={(e) => e.target.setCustomValidity('')}/>
+                            </div>
+                            <div>
+                                <Label htmlFor="username">Nombre de Usuario</Label>
+                                {
+                                user === 'admin' ? 
+                                <TextInput id="username" name="username" minLength={5} maxLength={30} value={formData.username} onChange={handleInputChange} required disabled readOnly onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa tu usuario debe de tener de 5 a 30 caracteres.')} onInput={(e) => e.target.setCustomValidity('')}/>
+                                :    
+                                <TextInput id="username" name="username" minLength={5} maxLength={30} value={formData.username} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa tu usuario debe de tener de 5 a 30 caracteres.')} onInput={(e) => e.target.setCustomValidity('')}/>    
+                                }
+                            </div>
+                            <div>
+                                <Label htmlFor="hashed_password">Contraseña</Label>
+                                <TextInput id="hashed_password" name="hashed_password" color={colorInputText} minLength={8} maxLength={16} type="password" value={formData.hashed_password} onChange={handleInputChange}  onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa tu contraseña debe de tener de 8 a 16 caracteres.')} onInput={(e) => e.target.setCustomValidity('')}/>
+                            </div>
+                            <div>
+                                <Label htmlFor="confirm_password">Confirmar Contraseña</Label>
+                                <TextInput id="confirm_password" name="confirm_password" color={colorInputText}
+                                    helperText={
+                                        <>
+                                            <p>{msgInputText}</p> 
+                                        </>
+                                    } 
+                                    minLength={8} maxLength={16} type="password" value={formData.confirm_password} onChange={handleInputChange} onInvalid={(e) => e.target.setCustomValidity('Por favor, confirma tu contraseña debe de tener de 8 a 16 caracteres.')} onInput={(e) => e.target.setCustomValidity('')}/>
+                            </div>
+                            <div>
+                                <Label htmlFor="rol_id">Rol</Label>
+
+                                {
+                                user === 'admin' ? 
+                                    
+                                    <Select id="rol_id" name="rol_id" value={formData.rol_id} onChange={handleInputChange} required disabled readOnly onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
+                                        <option value="">-Seleccione un rol-</option>
+                                        {roles.map(rol => (
+                                            <option key={rol.id} value={rol.id}>{rol.literal}</option>
+                                        ))}
+                                    </Select> 
+                                : 
+                                    <Select id="rol_id" name="rol_id" value={formData.rol_id} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
+                                        <option value="">-Seleccione un rol-</option>
+                                        {roles.map(rol => (
+                                            <option key={rol.id} value={rol.id}>{rol.literal}</option>
+                                        ))}
+                                    </Select>
+                                }     
+                                
+                            </div>
+                            <Button type="submit">Guardar</Button>
+                        </form>
+                    </Modal.Body>
+                </Modal>
+
+
                 <Modal show={openModal} size="md" onClose={() => setOpenModal(false)} popup>
                     <Modal.Header></Modal.Header>
                     <Modal.Body>
@@ -203,4 +658,4 @@ function UsariosActicvos() {
     );
 }
 
-export default UsariosActicvos;
+export default UsariosActivos;
