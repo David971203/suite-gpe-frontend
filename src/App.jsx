@@ -9,6 +9,9 @@ import {
   USERS_INACT,
   PORTADORES_ACT,
   PORTADORES_INACT,
+  UNIDADES_MEDIDA,
+  TIPO_PORTADORES_ACT,
+  TIPO_PORTADORES_INACT,
   LOGIN,
 } from './routes/Paths';
 import HomePage from './componentes/pages/homepage';
@@ -16,6 +19,9 @@ import UsariosActivos from './componentes/pages/usuarios/usarios-activos';
 import UsariosInactivos from './componentes/pages/usuarios/usuarios-inactivos';
 import PortadoresActivos from './componentes/pages/portadores_energeticos/portadores-energeticos-activos';
 import PortadoresInactivos from './componentes/pages/portadores_energeticos/portadores-energeticos-inactivos';
+import UnidadesMedidas from './componentes/pages/unidades_medidas/unidades-medidas';
+import TipoPortadoresActivos from './componentes/pages/tipo_portadores_energeticos/tipo_portadores-energeticos-activos';
+import TipoPortadoresInactivos from './componentes/pages/tipo_portadores_energeticos/tipo_portadores-energeticos-inactivos';
 import Login from './componentes/pages/login';
 import PrivateRoute from './componentes/pages/PrivateRoute';
 import './App.css';
@@ -41,6 +47,9 @@ function App() {
               <Route path={USERS_INACT} element={<PrivateRoute component={UsariosInactivos} />} />
               <Route path={PORTADORES_ACT} element={<PrivateRoute component={PortadoresActivos} />} />
               <Route path={PORTADORES_INACT} element={<PrivateRoute component={PortadoresInactivos} />} />
+              <Route path={UNIDADES_MEDIDA} element={<PrivateRoute component={UnidadesMedidas} />} />
+              <Route path={TIPO_PORTADORES_ACT} element={<PrivateRoute component={TipoPortadoresActivos} />} />
+              <Route path={TIPO_PORTADORES_INACT} element={<PrivateRoute component={TipoPortadoresInactivos} />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

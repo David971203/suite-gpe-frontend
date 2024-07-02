@@ -17,3 +17,15 @@ export const renderWithTooltip = (rowData, field) => {
     }
     return value;
 };
+
+export const renderTooltipSidebar = (value) => {
+  
+  if (value.length > 20) {
+    return (
+      <Tooltip content={value} placement="top">
+        {value.substring(0, 20) + '...'}
+      </Tooltip>
+    );
+  }
+  return value;
+};

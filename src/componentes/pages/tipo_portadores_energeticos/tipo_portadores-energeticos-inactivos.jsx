@@ -19,8 +19,8 @@ import { TableActionsItemsInactive } from '../../../utils/TableActions';
 import ConfirmacionModal from '../../../utils/ConfirmacionModal';
 import ToastNotification from '../../../utils/ToastNotification';
 
-function PortadoresInactivos() {
-    const [portadores, setPortadores] = useState([]);
+function TipoPortadoresInactivos() {
+    const [tipoPortadores, settipoPortadores] = useState([]);
     const [loading, setLoading] = useState(true);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState({
@@ -42,13 +42,13 @@ function PortadoresInactivos() {
 
     const confirmActivar = () => {
         const token = localStorage.getItem('token');
-        axios.put(`${apiUrl}/portador_energetico/estado/${selectedId}`, { estado: "Activo" }, {
+        axios.put(`${apiUrl}/tipo_portador_energetico/estado/${selectedId}`, { estado: "Activo" }, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         })
             .then(response => {
-                setPortadores(portadores.filter(portador => portador.id !== selectedId));
+                settipoPortadores(tipoPortadores.filter(tipoPortador => tipoPortador.id !== selectedId));
                 setOpenModal(false);
                 setToastMessage(response.data.message);
                 setShowToastSUCC(true);
@@ -94,13 +94,13 @@ function PortadoresInactivos() {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        axios.get(`${apiUrl}/portador_energeticos`, {
+        axios.get(`${apiUrl}/tipo_portador_energeticos`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         })
             .then(response => {
-                setPortadores(response.data);
+                settipoPortadores(response.data);
                 setLoading(false);
             })
             .catch(error => {
@@ -131,8 +131,8 @@ function PortadoresInactivos() {
             });
     }, []);
 
-    const inactivePortadores = portadores.filter(portador => portador.estado === 'Inactivo');
-    const inactivePortadoresCount = inactivePortadores.length;
+    const inactiveTipoPortadores = tipoPortadores.filter(tipoPortador => tipoPortador.estado === 'Inactivo');
+    const inactiveTipoPortadoresCount = inactiveTipoPortadores.length;
 
     const renderLoadingElements = () => (
         [...Array(5)].map((_, i) => (
@@ -146,12 +146,12 @@ function PortadoresInactivos() {
         ))
     );
 
-    const renderPortadores = () => (
+    const renderTipoPortadores = () => (
         <div className="container mx-auto px-4">
-            <h5 className="text-2xl font-bold text-cyan-700 dark:text-white">Portadores Energéticos Inactivos</h5>
+            <h5 className="text-2xl font-bold text-cyan-700 dark:text-white">Tipo Portadores Energéticos Inactivos</h5>
             <br />
             <DataTable 
-                value={inactivePortadores}
+                value={inactiveTipoPortadores}
                 paginator
                 rows={5}
                 rowsPerPageOptions={[5, 10, 25, 50]}
@@ -162,13 +162,41 @@ function PortadoresInactivos() {
                 emptyMessage="No hay datos disponibles"
                 className="p-datatable-gridlines p-component table-auto w-full text-left"
             >
-                <Column field="nombre" header="NOMBRE" body={(rowData) => renderWithTooltip(rowData, 'nombre')} className="p-col text-sm font-medium text-gray-900 px-6 py-4" />
-                <Column body={actionBodyTemplate} header="ACCIONES" className="p-col text-sm font-medium text-gray-900 px-6 py-4" />
+                <Column 
+                    field="nombre" 
+                    header="NOMBRE" 
+                    body={(rowData) => renderWithTooltip(rowData, 'nombre')} 
+                    className="p-col text-sm font-medium text-gray-900 px-6 py-4"
+                />
+                <Column 
+                    field="tarifa" 
+                    header="Tarifa" 
+                    body={(rowData) => renderWithTooltip(rowData, 'tarifa')}
+                    className="p-col text-sm font-medium text-gray-900 px-6 py-4"
+                />
+                <Column 
+                    field="portador.nombre" 
+                    header="Portador" 
+                    body={(rowData) => renderWithTooltip(rowData, 'portador.nombre')}
+                    className="p-col text-sm font-medium text-gray-900 px-6 py-4"
+                />
+                <Column 
+                    field="unidad_medida.nombre" 
+                    header="Unidad de Medida" 
+                    body={(rowData) => renderWithTooltip(rowData, 'unidad_medida.nombre')}
+                    className="p-col text-sm font-medium text-gray-900 px-6 py-4"
+                />
+
+                <Column 
+                    body={actionBodyTemplate} 
+                    header="ACCIONES"
+                    className="p-col text-sm font-medium text-gray-900 px-6 py-4" 
+                />
             </DataTable>
             <div className="flex flex-wrap gap-2">
-                <Button>Portadores Inactivos: {inactivePortadoresCount}</Button>
-                <Button href='/portadores'>
-                    <HiOutlineArrowNarrowLeft className="mr-2 h-5 w-5" />Ver Portadores Activos
+                <Button>Tipo Portadores Inactivos: {inactiveTipoPortadoresCount}</Button>
+                <Button href='/tipo-portadores'>
+                    <HiOutlineArrowNarrowLeft className="mr-2 h-5 w-5" />Ver Tipo Portadores Activos
                 </Button>
             </div>
         </div>
@@ -180,16 +208,16 @@ function PortadoresInactivos() {
                 <div role="status" className="w-full p-4 space-y-4 divide-y divide-gray-200 dark:divide-gray-700 md:p-6 dark:border-gray-700">
                     {loading ? renderLoadingElements() : (
                         <PrimeReactProvider>
-                            {renderPortadores()}
+                            {renderTipoPortadores()}
                         </PrimeReactProvider>
                     )}
                 </div>
                 <ToastNotification show={showToastSUCC} type="success" message={toastMessage} onClose={() => setShowToastSUCC(false)} />
                 <ToastNotification show={showToastERR} type="error" message={toastMessage} onClose={() => setShowToastERR(false)} />
-                <ConfirmacionModal show={openModal} onClose={() => setOpenModal(false)} onConfirm={confirmActivar} msg={'¿Desea activar este portador?'} />
+                <ConfirmacionModal show={openModal} onClose={() => setOpenModal(false)} onConfirm={confirmActivar} msg={'¿Desea activar este tipo de portador?'} />
             </section>
         </Layout>
     );
 }
 
-export default PortadoresInactivos;
+export default TipoPortadoresInactivos;

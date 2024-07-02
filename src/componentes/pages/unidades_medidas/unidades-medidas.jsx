@@ -18,8 +18,8 @@ import {TableActionsItemsActive} from '../../../utils/TableActions';
 import ConfirmacionModal from '../../../utils/ConfirmacionModal';
 import ToastNotification from '../../../utils/ToastNotification';
 
-function PortadoresActivos() {
-    const [portadores, setPortadores] = useState([]);
+function UnidadesMedidas() {
+    const [unidMedida, setunidMedida] = useState([]);
     const [loading, setLoading] = useState(true);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState({
@@ -27,9 +27,9 @@ function PortadoresActivos() {
     });
 
     const [formData, setFormData] = useState({
-        nombre: '',
-        estado:'Activo'
-      });
+        nombre: ''
+    });
+    var unidMedidaCount = 0;
     const [openModal, setOpenModal] = useState(false);
     const [openNewModal, setOpenNewModal] = useState(false);
     const [openEdtModal, setOpenEdtModal] = useState(false);
@@ -42,35 +42,29 @@ function PortadoresActivos() {
     const resetFormData = () => {
         setFormData({
             nombre: '',
-            estado:'Activo'
         });
     };
-
+  
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
-    
 
     //Add
     const handleSubmit = (e) => {
         e.preventDefault();
 
         
-
-        
-
         const token = localStorage.getItem('token');
-        axios.post(`${apiUrl}/portador_energetico`, {
+        axios.post(`${apiUrl}/unidad_medida`, {
             nombre: formData.nombre,
-            estado: formData.estado,
         }, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         })
         .then(response => {
-            setPortadores([ response.data.portador,...portadores]);
+            setunidMedida([ response.data.unidad_medida,...unidMedida]);
             setToastMessage(response.data.message);
             setShowToastSUCC(true);
             setTimeout(() => setShowToastSUCC(false), 5000);
@@ -95,7 +89,11 @@ function PortadoresActivos() {
                 setTimeout(() => setShowToastERR(false), 5000);
             }
         });
+
     };
+
+    //console.log(unidMedida);
+    
 
     //Edt
     const openModalWithData = (userId) => {
@@ -105,6 +103,7 @@ function PortadoresActivos() {
         setOpenEdtModal(true);
         
     };
+
     useEffect(() => {
         if (selectedId !== null) {
             fetchUserData(selectedId);
@@ -114,7 +113,7 @@ function PortadoresActivos() {
     const fetchUserData = async (selectedId) => {
         const token = localStorage.getItem('token'); // Obtener el token del almacenamiento local
         
-        await axios.get(`${apiUrl}/portador_energetico/${selectedId}`, {
+        await axios.get(`${apiUrl}/unidad_medida/${selectedId}`, {
             headers: {
                 'Authorization': `Bearer ${token}` // Incluir el token en los encabezados
             }
@@ -122,8 +121,7 @@ function PortadoresActivos() {
             .then(response => {
                 
                 setFormData({
-                    nombre: response.data.nombre,
-                    estado: response.data.estado
+                    nombre: response.data.nombre
                 });
                 
             })
@@ -160,7 +158,7 @@ function PortadoresActivos() {
         
 
         const token = localStorage.getItem('token');
-        axios.put(`${apiUrl}/portador_energetico/${selectedId}`, {
+        axios.put(`${apiUrl}/unidad_medida/${selectedId}`, {
             nombre: formData.nombre,
             estado: formData.estado,
         }, {
@@ -169,8 +167,8 @@ function PortadoresActivos() {
             }
         })
         .then(response => {
-            setPortadores((prevPortadores) => 
-                prevPortadores.map(portador => portador.id === selectedId ? response.data.portador : portador)
+            setunidMedida((prevUnidadesMedida) => 
+                prevUnidadesMedida.map(uM => uM.id === selectedId ? response.data.unidad_medida : uM)
             );
             setToastMessage(response.data.message);
             setShowToastSUCC(true);
@@ -198,6 +196,7 @@ function PortadoresActivos() {
             }
         });
     };
+    
 
     //Delete
     const handleDeleteClick = (id) => {
@@ -207,13 +206,14 @@ function PortadoresActivos() {
 
     const confirmDelete = () => {
         const token = localStorage.getItem('token');
-        axios.put(`${apiUrl}/portador_energetico/estado/${selectedId}`, { estado: "Inactivo" }, {
+        axios.delete(`${apiUrl}/unidad_medida/${selectedId}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         })
             .then(response => {
-                setPortadores(portadores.filter(portador => portador.id !== selectedId));
+                setunidMedida(unidMedida.filter(uM => uM.id !== selectedId));
+                unidMedidaCount = unidMedida.length;
                 setOpenModal(false);
                 setToastMessage(response.data.message);
                 setShowToastERR(true);
@@ -239,7 +239,7 @@ function PortadoresActivos() {
             });
     };
 
-    //Tabla
+      //Tabla
     const actionBodyTemplate = (rowData) => (
         <TableActionsItemsActive
             onEdit={() => openModalWithData(rowData.id)}
@@ -247,7 +247,8 @@ function PortadoresActivos() {
         />
     );
 
-    const onGlobalFilterChange = (e) => {
+
+      const onGlobalFilterChange = (e) => {
         const value = e.target.value;
         setFilters({ ...filters, global: { value, matchMode: FilterMatchMode.CONTAINS } });
         setGlobalFilterValue(value);
@@ -266,16 +267,19 @@ function PortadoresActivos() {
         </div>
     );
 
+    let um_lengt = 0;
     useEffect(() => {
         const token = localStorage.getItem('token');
-        axios.get(`${apiUrl}/portador_energeticos`, {
+        axios.get(`${apiUrl}/unidad_medidas`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         })
             .then(response => {
-                const sortedPortador = response.data.sort((a, b) => b.id - a.id);
-                setPortadores(sortedPortador);
+                const sortedUnidadMedida = response.data.sort((a, b) => b.id - a.id);
+                
+                setunidMedida(sortedUnidadMedida);
+                
                 setLoading(false);
             })
             .catch(error => {
@@ -304,10 +308,12 @@ function PortadoresActivos() {
                 setLoading(false);
                 setTimeout(() => setShowToastERR(false), 5000);
             });
+
+            
     }, []);
 
-    const activePortadores = portadores.filter(portador => portador.estado === 'Activo');
-    const activePortadoresCount = activePortadores.length;
+    console.log(unidMedida);
+    unidMedidaCount = unidMedida.length;
 
     const renderLoadingElements = () => (
         [...Array(5)].map((_, i) => (
@@ -320,16 +326,16 @@ function PortadoresActivos() {
             </div>
         ))
     );
-
-    const renderPortadores = () => (
+    
+    const renderUnidades = () => (
         <div className="container mx-auto h-auto px-4">
-            <h5 className="text-2xl font-bold text-cyan-700 dark:text-white">Portadores Energéticos</h5>
+            <h5 className="text-2xl font-bold text-cyan-700 dark:text-white">Unidades de Medida</h5>
             <br />
             <Button onClick={() => setOpenNewModal(true)} className='mb-2'>
-                Nuevo Portador <HiOutlinePlus className="ml-2 h-5 w-5" />
+                Nueva Unidad de Medida <HiOutlinePlus className="ml-2 h-5 w-5" />
             </Button>
             <DataTable 
-                value={activePortadores}
+                value={unidMedida}
                 paginator
                 rows={5}
                 rowsPerPageOptions={[5, 10, 25, 50]}
@@ -353,10 +359,7 @@ function PortadoresActivos() {
                 />
             </DataTable>
             <div className="flex flex-wrap gap-2">
-                <Button>Portadores Activos: {activePortadoresCount}</Button>
-                <Button href='/portadores/inactive'>
-                    Ver Portadores Inactivos <HiOutlineArrowNarrowRight className="ml-2 h-5 w-5" />
-                </Button>
+                <Button>Unidades de Medida: {unidMedidaCount}</Button>
             </div>
         </div>
     );
@@ -367,7 +370,7 @@ function PortadoresActivos() {
                 <div role="status" className="w-full p-4 space-y-4 divide-y divide-gray-200 dark:divide-gray-700 md:p-6 dark:border-gray-700">
                     {loading ? renderLoadingElements() : (
                         <PrimeReactProvider>
-                            {renderPortadores()}
+                            {renderUnidades()}
                         </PrimeReactProvider>
                     )}
                 </div>
@@ -376,7 +379,7 @@ function PortadoresActivos() {
                 
                 <Modal show={openNewModal}  size='md'onClose={() => {setOpenNewModal(false); resetFormData();}}>
                     <Modal.Header onClose={() => { setOpenNewModal(false); resetFormData(); }}>
-                        Nuevo Portador Energético
+                        Nueva Unidad de Medida
                     </Modal.Header>
                     <Modal.Body>
                         <form onSubmit={handleSubmit} className="space-y-4">
@@ -394,7 +397,7 @@ function PortadoresActivos() {
 
                 <Modal show={openEdtModal}  size='md'onClose={() => {setOpenEdtModal(false); resetFormData();}}>
                     <Modal.Header onClose={() => { setOpenEdtModal(false); resetFormData(); }}>
-                        Editar Portador Energético
+                        Editar Unidad de Medida
                     </Modal.Header>
                     <Modal.Body>
                         <form onSubmit={handleEdtSubmit} className="space-y-4">
@@ -409,10 +412,10 @@ function PortadoresActivos() {
                         </form>
                     </Modal.Body>
                 </Modal>    
-                <ConfirmacionModal show={openModal} onClose={() => setOpenModal(false)} onConfirm={confirmDelete} msg={'¿Desea eliminar este portador?'} />
+                <ConfirmacionModal show={openModal} onClose={() => setOpenModal(false)} onConfirm={confirmDelete} msg={'¿Desea eliminar esta unidad de medida?'} />
             </section>
         </Layout>
     );
 }
 
-export default PortadoresActivos;
+export default UnidadesMedidas;

@@ -8,7 +8,7 @@ import { renderWithTooltip } from '../../../utils/renderWithTooltip';
 import { TextInput } from "flowbite-react";
 import { Label, Select} from 'flowbite-react';
 import { Tooltip ,Toast } from 'flowbite-react';
-import { HiOutlineSearch, HiPencil, HiTrash,HiOutlineArrowNarrowRight,HiOutlinePlus,HiOutlineExclamationCircle,HiX,HiCheck} from "react-icons/hi";
+import { HiOutlineSearch, HiPencil, HiTrash,HiOutlineArrowNarrowRight,HiOutlinePlus,HiOutlineExclamationCircle,HiX,HiCheck,HiEye, HiEyeOff} from "react-icons/hi";
 import Layout from "../../layout/layout";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -42,6 +42,7 @@ function UsariosActivos() {
         estado: 'Activo',
         rol_id: ''
       });
+    const [showPassword, setShowPassword] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState(null);
     const [showToastSUCC, setShowToastSUCC] = useState(false);
     const [showToastERR, setShowToastERR] = useState(false);
@@ -63,6 +64,7 @@ function UsariosActivos() {
         });
     };
 
+    
 
     //Add
           
@@ -130,7 +132,7 @@ function UsariosActivos() {
             }
         })
         .then(response => {
-            setUsers([, response.data.user,...users]);
+            setUsers([response.data.user,...users]);
             setToastMessage(response.data.message);
             setShowToastSUCC(true);
             setTimeout(() => setShowToastSUCC(false), 5000);
@@ -542,7 +544,7 @@ function UsariosActivos() {
                             </div>
                             <div>
                                 <Label htmlFor="hashed_password">Contraseña</Label>
-                                <TextInput id="hashed_password" name="hashed_password" color={colorInputText} minLength={8} maxLength={16} type="password" value={formData.hashed_password} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa tu contraseña debe de tener de 8 a 16 caracteres.')} onInput={(e) => e.target.setCustomValidity('')}/>
+                                <TextInput id="hashed_password" name="hashed_password" color={colorInputText} minLength={8} maxLength={16} type={showPassword ? 'text' : 'password'} value={formData.hashed_password} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa tu contraseña debe de tener de 8 a 16 caracteres.')} onInput={(e) => e.target.setCustomValidity('')}/>
                             </div>
                             <div>
                                 <Label htmlFor="confirm_password">Confirmar Contraseña</Label>

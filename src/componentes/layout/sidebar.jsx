@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom';
 import { Sidebar } from 'flowbite-react';
 import { HiArrowSmRight, HiChartPie, HiInbox, HiShoppingBag, HiTable, HiCog, HiIdentification } from 'react-icons/hi';
 import { customSidebar } from '../../utils/customThemes';
+import { renderTooltipSidebar } from '../../utils/renderWithTooltip';
 import {jwtDecode} from 'jwt-decode';
 
 function SidebarComponent({ isOpen, onToggleSidebar }) {
@@ -22,6 +23,20 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
 
   useEffect(() => {
     if (location.pathname.startsWith('/portadores')) {
+      setOpenCollapse(1);
+      setSelectedItem(location.pathname);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/unidades-medida')) {
+      setOpenCollapse(1);
+      setSelectedItem(location.pathname);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/tipo-portadores')) {
       setOpenCollapse(1);
       setSelectedItem(location.pathname);
     }
@@ -101,28 +116,41 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
               className={isItemSelected('/users')}
               onClick={() => handleItemClick('/users')}
             >
-              Usuarios
+            {renderTooltipSidebar('Usuarios')} 
+
             </Sidebar.Item>
             <Sidebar.Item
                href="/portadores"
               className={isItemSelected('/portadores')}
               onClick={() => handleItemClick('/portadores')}
             >
-              Portadores Energéticos
+            {renderTooltipSidebar('Portadores Energéticos')} 
+          
             </Sidebar.Item>
             <Sidebar.Item
-              href="#refunds"
-              className={isItemSelected('#refunds')}
-              onClick={() => handleItemClick('#refunds')}
+              href="/tipo-portadores"
+              className={isItemSelected('/tipo-portadores')}
+              onClick={() => handleItemClick('/tipo-portadores')}
             >
-              Refunds
+             {renderTooltipSidebar('Tipos de Portadores Energéticos')} 
+
             </Sidebar.Item>
             <Sidebar.Item
-              href="#shipping"
-              className={isItemSelected('#shipping')}
-              onClick={() => handleItemClick('#shipping')}
+              href="#"
+              //className={isItemSelected('/unidades-medida')}
+              //onClick={() => handleItemClick('/unidades-medida')}
             >
-              Shipping
+            {renderTooltipSidebar('Categorias de CDA')} 
+              
+            </Sidebar.Item>
+            
+            <Sidebar.Item
+              href="/unidades-medida"
+              className={isItemSelected('/unidades-medida')}
+              onClick={() => handleItemClick('/unidades-medida')}
+            >
+            {renderTooltipSidebar('Unidades de Medida')} 
+              
             </Sidebar.Item>
           </Sidebar.Collapse>
         </Sidebar.ItemGroup>

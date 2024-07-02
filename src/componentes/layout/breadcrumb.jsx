@@ -54,17 +54,45 @@ function BreadCrumbComponent() {
             <Breadcrumb.Item href="/portadores">Portadores Energéticos</Breadcrumb.Item>
             <Breadcrumb.Item href="/portadores/inactive">Inactivos</Breadcrumb.Item>
           </Breadcrumb>
-        );  
-    default:
+        );
+      case '/unidades-medida':
       return (
         <Breadcrumb aria-label="Default breadcrumb example">
-          <Breadcrumb.Item href="#" icon={HiHome}>
-            {location.pathname}
+          <Breadcrumb.Item href="/" icon={HiHome}>
+            Inicio
           </Breadcrumb.Item>
-          <Breadcrumb.Item href="#">Projects</Breadcrumb.Item>
-          <Breadcrumb.Item>Flowbite React</Breadcrumb.Item>
+          <Breadcrumb.Item href="/unidades-medida">Unidades de Medida</Breadcrumb.Item>
         </Breadcrumb>
       );
+      case '/tipo-portadores':
+      return (
+        <Breadcrumb aria-label="Default breadcrumb example">
+          <Breadcrumb.Item href="/" icon={HiHome}>
+            Inicio
+          </Breadcrumb.Item>
+          <Breadcrumb.Item href="/tipo-portadores">Tipo de Portadores Energéticos</Breadcrumb.Item>
+        </Breadcrumb>
+      );
+      case '/tipo-portadores/inactive':
+        return (
+          <Breadcrumb aria-label="Default breadcrumb example">
+            <Breadcrumb.Item href="/" icon={HiHome}>
+              Inicio
+            </Breadcrumb.Item>
+            <Breadcrumb.Item href="/tipo-portadores">Tipo de Portadores Energéticos</Breadcrumb.Item>
+            <Breadcrumb.Item href="/tipo-portadores/inactive">Inactivos</Breadcrumb.Item>
+          </Breadcrumb>
+        );  
+      default:
+        return (
+          <Breadcrumb aria-label="Default breadcrumb example">
+            <Breadcrumb.Item href="#" icon={HiHome}>
+              {location.pathname}
+            </Breadcrumb.Item>
+            <Breadcrumb.Item href="#">Projects</Breadcrumb.Item>
+            <Breadcrumb.Item>Flowbite React</Breadcrumb.Item>
+          </Breadcrumb>
+        );
   }
 }
 
