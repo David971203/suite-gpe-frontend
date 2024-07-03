@@ -12,6 +12,8 @@ import {
   UNIDADES_MEDIDA,
   TIPO_PORTADORES_ACT,
   TIPO_PORTADORES_INACT,
+  CATEGORIA_CDA_ACT,
+  CATEGORIA_CDA_INACT,
   LOGIN,
 } from './routes/Paths';
 import HomePage from './componentes/pages/homepage';
@@ -22,6 +24,8 @@ import PortadoresInactivos from './componentes/pages/portadores_energeticos/port
 import UnidadesMedidas from './componentes/pages/unidades_medidas/unidades-medidas';
 import TipoPortadoresActivos from './componentes/pages/tipo_portadores_energeticos/tipo_portadores-energeticos-activos';
 import TipoPortadoresInactivos from './componentes/pages/tipo_portadores_energeticos/tipo_portadores-energeticos-inactivos';
+import CategoriasCdaActivos from './componentes/pages/categorias-cda/categorias-cda-activos';
+import CategoriasCdaInactivos from './componentes/pages/categorias-cda/categorias-cda-inactivos';
 import Login from './componentes/pages/login';
 import PrivateRoute from './componentes/pages/PrivateRoute';
 import './App.css';
@@ -50,6 +54,8 @@ function App() {
               <Route path={UNIDADES_MEDIDA} element={<PrivateRoute component={UnidadesMedidas} />} />
               <Route path={TIPO_PORTADORES_ACT} element={<PrivateRoute component={TipoPortadoresActivos} />} />
               <Route path={TIPO_PORTADORES_INACT} element={<PrivateRoute component={TipoPortadoresInactivos} />} />
+              <Route path={CATEGORIA_CDA_ACT} element={<PrivateRoute component={CategoriasCdaActivos} />} />
+              <Route path={CATEGORIA_CDA_INACT} element={<PrivateRoute component={CategoriasCdaInactivos} />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Sidebar } from 'flowbite-react';
-import { HiArrowSmRight, HiChartPie, HiInbox, HiShoppingBag, HiTable, HiCog, HiIdentification } from 'react-icons/hi';
+import { HiOutlineSwitchHorizontal , HiChartPie, HiClipboardList , HiChevronDoubleRight , HiCog, HiIdentification,HiAdjustments  } from 'react-icons/hi';
 import { customSidebar } from '../../utils/customThemes';
 import { renderTooltipSidebar } from '../../utils/renderWithTooltip';
 import {jwtDecode} from 'jwt-decode';
@@ -37,6 +37,13 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
 
   useEffect(() => {
     if (location.pathname.startsWith('/tipo-portadores')) {
+      setOpenCollapse(1);
+      setSelectedItem(location.pathname);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/categorias-cda')) {
       setOpenCollapse(1);
       setSelectedItem(location.pathname);
     }
@@ -79,17 +86,17 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
           <Sidebar.Item href="#" icon={HiChartPie}>
             Dashboard {rol}
           </Sidebar.Item>
-          <Sidebar.Item href="#" icon={HiInbox}>
-            Inbox
+          <Sidebar.Item href="#" icon={HiClipboardList }>
+            Planificación
           </Sidebar.Item>
-          <Sidebar.Item href="#" icon={HiShoppingBag}>
-            Products
+          <Sidebar.Item href="#" icon={HiChevronDoubleRight}>
+            Administración
           </Sidebar.Item>
-          <Sidebar.Item href="#" icon={HiArrowSmRight}>
-            Sign In
+          <Sidebar.Item href="#" icon={HiOutlineSwitchHorizontal}>
+            Traspasos
           </Sidebar.Item>
-          <Sidebar.Item href="#" icon={HiTable}>
-            Sign Up
+          <Sidebar.Item href="#" icon={HiAdjustments}>
+            Control
           </Sidebar.Item>
           <Sidebar.Collapse
             icon={HiCog}
@@ -136,11 +143,11 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
 
             </Sidebar.Item>
             <Sidebar.Item
-              href="#"
-              //className={isItemSelected('/unidades-medida')}
-              //onClick={() => handleItemClick('/unidades-medida')}
+              href="/categorias-cda"
+              className={isItemSelected('/categorias-cda')}
+              onClick={() => handleItemClick('/categorias-cda')}
             >
-            {renderTooltipSidebar('Categorias de CDA')} 
+            {renderTooltipSidebar('Categorías de CDA')} 
               
             </Sidebar.Item>
             

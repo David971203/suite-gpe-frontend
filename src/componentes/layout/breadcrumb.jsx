@@ -82,7 +82,26 @@ function BreadCrumbComponent() {
             <Breadcrumb.Item href="/tipo-portadores">Tipo de Portadores Energéticos</Breadcrumb.Item>
             <Breadcrumb.Item href="/tipo-portadores/inactive">Inactivos</Breadcrumb.Item>
           </Breadcrumb>
-        );  
+        );
+      case '/categorias-cda':
+        return (
+          <Breadcrumb aria-label="Default breadcrumb example">
+            <Breadcrumb.Item href="/" icon={HiHome}>
+              Inicio
+            </Breadcrumb.Item>
+            <Breadcrumb.Item href="/categorias-cda">Categorías CDA</Breadcrumb.Item>
+          </Breadcrumb>
+        );
+      case '/categorias-cda/inactive':
+      return (
+        <Breadcrumb aria-label="Default breadcrumb example">
+          <Breadcrumb.Item href="/" icon={HiHome}>
+            Inicio
+          </Breadcrumb.Item>
+          <Breadcrumb.Item href="/categorias-cda">Categorías CDA</Breadcrumb.Item>
+          <Breadcrumb.Item href="/categorias-cda/inactive">Inactivos</Breadcrumb.Item>
+        </Breadcrumb>
+      );    
       default:
         return (
           <Breadcrumb aria-label="Default breadcrumb example">

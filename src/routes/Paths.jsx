@@ -8,6 +8,8 @@ export const PORTADORES_INACT = "/portadores/inactive";
 export const UNIDADES_MEDIDA = "/unidades-medida";
 export const TIPO_PORTADORES_ACT = "/tipo-portadores";
 export const TIPO_PORTADORES_INACT = "/tipo-portadores/inactive";
+export const CATEGORIA_CDA_ACT = "/categorias-cda";
+export const CATEGORIA_CDA_INACT = "/categorias-cda/inactive";
 
 const Paths = {
   EMPTY,
@@ -19,6 +21,8 @@ const Paths = {
   UNIDADES_MEDIDA,
   TIPO_PORTADORES_ACT,
   TIPO_PORTADORES_INACT,
+  CATEGORIA_CDA_ACT,
+  CATEGORIA_CDA_INACT,
   LOGIN
 };
 
