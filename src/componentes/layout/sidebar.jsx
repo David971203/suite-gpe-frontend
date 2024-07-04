@@ -49,6 +49,13 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
     }
   }, [location]);
 
+  useEffect(() => {
+    if (location.pathname.startsWith('/actividades-cda')) {
+      setOpenCollapse(1);
+      setSelectedItem(location.pathname);
+    }
+  }, [location]);
+
   const handleCollapseClick = (index) => {
     setOpenCollapse(openCollapse === index ? null : index);
   };
@@ -151,6 +158,15 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
               
             </Sidebar.Item>
             
+            <Sidebar.Item
+              href="/actividades-cda"
+              className={isItemSelected('/actividades-cda')}
+              onClick={() => handleItemClick('/actividades-cda')}
+            >
+            {renderTooltipSidebar('Actividades de CDA')} 
+              
+            </Sidebar.Item>
+
             <Sidebar.Item
               href="/unidades-medida"
               className={isItemSelected('/unidades-medida')}

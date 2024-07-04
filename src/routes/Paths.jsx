@@ -10,6 +10,8 @@ export const TIPO_PORTADORES_ACT = "/tipo-portadores";
 export const TIPO_PORTADORES_INACT = "/tipo-portadores/inactive";
 export const CATEGORIA_CDA_ACT = "/categorias-cda";
 export const CATEGORIA_CDA_INACT = "/categorias-cda/inactive";
+export const ACTIVIDAD_CDA_ACT = "/actividades-cda";
+export const ACTIVIDAD_CDA_INACT = "/actividades-cda/inactive";
 
 const Paths = {
   EMPTY,
@@ -23,6 +25,8 @@ const Paths = {
   TIPO_PORTADORES_INACT,
   CATEGORIA_CDA_ACT,
   CATEGORIA_CDA_INACT,
+  ACTIVIDAD_CDA_ACT,
+  ACTIVIDAD_CDA_INACT,
   LOGIN
 };
 
