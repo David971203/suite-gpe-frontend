@@ -56,6 +56,13 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
     }
   }, [location]);
 
+  useEffect(() => {
+    if (location.pathname.startsWith('/sector')) {
+      setOpenCollapse(1);
+      setSelectedItem(location.pathname);
+    }
+  }, [location]);
+
   const handleCollapseClick = (index) => {
     setOpenCollapse(openCollapse === index ? null : index);
   };
@@ -73,11 +80,12 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
   const rol = decodedToken.role
 
   return (
+    
     <Sidebar
       id="sidebar"
-      theme={customSidebar}
+      
       aria-label="Sidebar with multi-level dropdown example"
-      className={`transition-transform duration-300 transform ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} fixed md:static top-0 left-0 h-full z-40 border-r border-gray-300 dark:border-gray-700`}
+      className={` transition-transform duration-300  ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} fixed md:static top-0 left-0 h-full z-40 border-r border-gray-300 dark:border-gray-700`}
     >
       <div className="py-5 block sm:hidden pb-3">
         <h5 id="sidebar-label" className="text-base font-semibold text-gray-500 uppercase dark:text-gray-400">Menú</h5>
@@ -90,9 +98,7 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
       </div>
       <Sidebar.Items>
         <Sidebar.ItemGroup>
-          <Sidebar.Item href="#" icon={HiChartPie}>
-            Dashboard {rol}
-          </Sidebar.Item>
+          
           <Sidebar.Item href="#" icon={HiClipboardList }>
             Planificación
           </Sidebar.Item>
@@ -124,6 +130,7 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
             label="Administración"
             open={openCollapse === 1}
             onClick={() => handleCollapseClick(1)}
+            
           >
             <Sidebar.Item
               href="/users"
@@ -175,7 +182,33 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
             {renderTooltipSidebar('Unidades de Medida')} 
               
             </Sidebar.Item>
+            <Sidebar.Item
+              href="/sector"
+              className={isItemSelected('/sector')}
+              onClick={() => handleItemClick('/sector')}
+            >
+            {renderTooltipSidebar('Sector')} 
+              
+            </Sidebar.Item>
+
+            <Sidebar.Item href="#">
+              Marca
+            </Sidebar.Item>
+
+            <Sidebar.Item href="#" >
+              Modelo
+            </Sidebar.Item>
+
+            <Sidebar.Item href="#" >
+              Provincia
+            </Sidebar.Item>
+
+            <Sidebar.Item href="#" >
+              Municipio
+            </Sidebar.Item>
+
           </Sidebar.Collapse>
+
         </Sidebar.ItemGroup>
       </Sidebar.Items>
     </Sidebar>

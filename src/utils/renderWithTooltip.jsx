@@ -22,7 +22,7 @@ export const renderTooltipSidebar = (value) => {
   
   if (value.length > 20) {
     return (
-      <Tooltip content={value} placement="top">
+      <Tooltip content={value} placement="right">
         {value.substring(0, 20) + '...'}
       </Tooltip>
     );

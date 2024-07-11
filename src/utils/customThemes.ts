@@ -1,18 +1,9 @@
 import type { CustomFlowbiteTheme } from "flowbite-react";
 
 export const customSidebar: CustomFlowbiteTheme['sidebar'] = {
-    root: {
-        "inner": "h-full overflow-y-auto overflow-x-hidden rounded-none bg-white py-4 px-3 dark:bg-gray-800",
-    },
-    item: {
-        "base": "group flex items-center justify-center rounded-lg p-2 text-base font-normal text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700",
-        "content": {
-            "base": "px-3 flex-1 whitespace-nowrap truncate"
-        },
-    },
-    collapse: {
-        "list": "space-y-2 pt-2"
-    },
+   
+    
+    
 };
 
 export const customTable: CustomFlowbiteTheme['table'] = {

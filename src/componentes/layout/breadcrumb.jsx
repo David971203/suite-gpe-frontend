@@ -122,6 +122,15 @@ function BreadCrumbComponent() {
             </Breadcrumb>
           );  
       default:
+      case '/sector':
+        return (
+          <Breadcrumb aria-label="Default breadcrumb example">
+            <Breadcrumb.Item href="/" icon={HiHome}>
+              Inicio
+            </Breadcrumb.Item>
+            <Breadcrumb.Item href="/sector">Sectores</Breadcrumb.Item>
+          </Breadcrumb>
+        );  
         return (
           <Breadcrumb aria-label="Default breadcrumb example">
             <Breadcrumb.Item href="#" icon={HiHome}>

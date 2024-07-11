@@ -16,6 +16,7 @@ import {
   CATEGORIA_CDA_INACT,
   ACTIVIDAD_CDA_ACT,
   ACTIVIDAD_CDA_INACT,
+  SECTOR,
   LOGIN,
 } from './routes/Paths';
 import HomePage from './componentes/pages/homepage';
@@ -30,6 +31,7 @@ import CategoriasCdaActivos from './componentes/pages/categorias-cda/categorias-
 import CategoriasCdaInactivos from './componentes/pages/categorias-cda/categorias-cda-inactivos';
 import ActividadesCdaActivos from './componentes/pages/actividades-cda/actividades-cda-activos';
 import ActividadesCdaInactivos from './componentes/pages/actividades-cda/actividades-cda-inactivos';
+import Sectores from './componentes/pages/sector/sector';
 import Login from './componentes/pages/login';
 import PrivateRoute from './componentes/pages/PrivateRoute';
 import './App.css';
@@ -68,6 +70,8 @@ function App() {
 
               <Route path={ACTIVIDAD_CDA_ACT} element={<PrivateRoute component={ActividadesCdaActivos} />} />
               <Route path={ACTIVIDAD_CDA_INACT} element={<PrivateRoute component={ActividadesCdaInactivos} />} />
+
+              <Route path={SECTOR} element={<PrivateRoute component={Sectores} />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>
