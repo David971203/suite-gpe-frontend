@@ -17,6 +17,8 @@ import {
   ACTIVIDAD_CDA_ACT,
   ACTIVIDAD_CDA_INACT,
   SECTOR,
+  MARCA_ACT,
+  MARCA_INACT,
   LOGIN,
 } from './routes/Paths';
 import HomePage from './componentes/pages/homepage';
@@ -32,6 +34,8 @@ import CategoriasCdaInactivos from './componentes/pages/categorias-cda/categoria
 import ActividadesCdaActivos from './componentes/pages/actividades-cda/actividades-cda-activos';
 import ActividadesCdaInactivos from './componentes/pages/actividades-cda/actividades-cda-inactivos';
 import Sectores from './componentes/pages/sector/sector';
+import MarcasActivos from './componentes/pages/marcas/marcas-activos';
+import MarcasInactivos from './componentes/pages/marcas/marcas-inactivos';
 import Login from './componentes/pages/login';
 import PrivateRoute from './componentes/pages/PrivateRoute';
 import './App.css';
@@ -72,6 +76,9 @@ function App() {
               <Route path={ACTIVIDAD_CDA_INACT} element={<PrivateRoute component={ActividadesCdaInactivos} />} />
 
               <Route path={SECTOR} element={<PrivateRoute component={Sectores} />} />
+
+              <Route path={MARCA_ACT} element={<PrivateRoute component={MarcasActivos} />} />
+              <Route path={MARCA_INACT} element={<PrivateRoute component={MarcasInactivos} />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

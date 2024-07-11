@@ -121,7 +121,7 @@ function BreadCrumbComponent() {
               <Breadcrumb.Item href="/actividades-cda/inactive">Inactivas</Breadcrumb.Item>
             </Breadcrumb>
           );  
-      default:
+      
       case '/sector':
         return (
           <Breadcrumb aria-label="Default breadcrumb example">
@@ -130,7 +130,17 @@ function BreadCrumbComponent() {
             </Breadcrumb.Item>
             <Breadcrumb.Item href="/sector">Sectores</Breadcrumb.Item>
           </Breadcrumb>
-        );  
+        );
+        case '/marcas':
+          return (
+            <Breadcrumb aria-label="Default breadcrumb example">
+              <Breadcrumb.Item href="/" icon={HiHome}>
+                Inicio
+              </Breadcrumb.Item>
+              <Breadcrumb.Item href="/marcas">Marcas</Breadcrumb.Item>
+            </Breadcrumb>
+          );  
+        default:
         return (
           <Breadcrumb aria-label="Default breadcrumb example">
             <Breadcrumb.Item href="#" icon={HiHome}>

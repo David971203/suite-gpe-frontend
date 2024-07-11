@@ -11,21 +11,27 @@ function Layout({ children }) {
   };
 
   return (
-    <div className="h-screen bg-gray-50 dark:bg-gray-900">
+    <div className=" bg-gray-50 dark:bg-gray-900">
+
       {/* Navbar */}
+      <div className="flex flex-col min-h-full h-screen">
       <Navbar onToggleSidebar={toggleSidebar} showToggle={true} />
 
-      <div className="flex min-h-full"> 
+
+      <div className="flex flex-1 overflow-y-auto border-b"> 
         
         <Sidebar isOpen={sidebarIsOpen} onToggleSidebar={toggleSidebar} />
         
-        <main className="flex-1 p-4 bg-gray-100 dark:bg-gray-900 border-l border-gray-300 dark:border-gray-700">
+        <main className="flex-1 overflow-y-auto p-4  bg-gray-100 dark:bg-gray-900 border-l  border-gray-300 dark:border-gray-700 ">
+        
           {children}
-          
+         
         </main>
         
       </div>
-      
+      <FooterComp/>
+      </div>
+
     </div>
   );
 }

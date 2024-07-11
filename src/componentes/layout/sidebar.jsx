@@ -63,6 +63,13 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
     }
   }, [location]);
 
+  useEffect(() => {
+    if (location.pathname.startsWith('/marcas')) {
+      setOpenCollapse(1);
+      setSelectedItem(location.pathname);
+    }
+  }, [location]);
+
   const handleCollapseClick = (index) => {
     setOpenCollapse(openCollapse === index ? null : index);
   };
@@ -80,7 +87,8 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
   const rol = decodedToken.role
 
   return (
-    
+  
+ 
     <Sidebar
       id="sidebar"
       
@@ -191,8 +199,14 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
               
             </Sidebar.Item>
 
-            <Sidebar.Item href="#">
-              Marca
+            <Sidebar.Item 
+              href="/marcas"
+              className={isItemSelected('/marcas')}
+              onClick={() => handleItemClick('/marcas')}
+
+            >
+              {renderTooltipSidebar('Marcas')} 
+            
             </Sidebar.Item>
 
             <Sidebar.Item href="#" >
@@ -212,6 +226,7 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
         </Sidebar.ItemGroup>
       </Sidebar.Items>
     </Sidebar>
+
   );
 }
 
