@@ -17,6 +17,8 @@ export const MARCA_ACT = "/marcas";
 export const MARCA_INACT = "/marcas/inactive";
 export const MODELO_ACT = "/modelos";
 export const MODELO_INACT = "/modelos/inactive";
+export const PROVINCIAS = "/provincias";
+export const MUNICIPIOS = "/municipios";
 
 
 const Paths = {
@@ -38,6 +40,8 @@ const Paths = {
   MARCA_INACT,
   MODELO_ACT,
   MODELO_INACT,
+  PROVINCIAS,
+  MUNICIPIOS,
   LOGIN
 };
 

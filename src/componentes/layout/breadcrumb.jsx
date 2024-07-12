@@ -168,6 +168,24 @@ function BreadCrumbComponent() {
             <Breadcrumb.Item href="/modelos">Modelos</Breadcrumb.Item>
             <Breadcrumb.Item href="/modelos/inactive">Inactivas</Breadcrumb.Item>
           </Breadcrumb>
+        );
+        case '/provincias':
+        return (
+          <Breadcrumb aria-label="Default breadcrumb example">
+            <Breadcrumb.Item href="/" icon={HiHome}>
+              Inicio
+            </Breadcrumb.Item>
+            <Breadcrumb.Item href="/provincias">Provincias</Breadcrumb.Item>
+          </Breadcrumb>
+        );
+        case '/municipios':
+        return (
+          <Breadcrumb aria-label="Default breadcrumb example">
+            <Breadcrumb.Item href="/" icon={HiHome}>
+              Inicio
+            </Breadcrumb.Item>
+            <Breadcrumb.Item href="/municipios">Municipios</Breadcrumb.Item>
+          </Breadcrumb>
         );    
         default:
         return (

@@ -77,6 +77,20 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
     }
   }, [location]);
 
+  useEffect(() => {
+    if (location.pathname.startsWith('/provincias')) {
+      setOpenCollapse(1);
+      setSelectedItem(location.pathname);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/municipios')) {
+      setOpenCollapse(1);
+      setSelectedItem(location.pathname);
+    }
+  }, [location]);
+
   const handleCollapseClick = (index) => {
     setOpenCollapse(openCollapse === index ? null : index);
   };
@@ -202,7 +216,7 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
               className={isItemSelected('/sector')}
               onClick={() => handleItemClick('/sector')}
             >
-            {renderTooltipSidebar('Sector')} 
+            {renderTooltipSidebar('Sectores')} 
               
             </Sidebar.Item>
 
@@ -224,12 +238,20 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
              {renderTooltipSidebar('Modelos')} 
             </Sidebar.Item>
 
-            <Sidebar.Item href="#" >
-              Provincia
+            <Sidebar.Item 
+              href="/provincias"
+              className={isItemSelected('/provincias')}
+              onClick={() => handleItemClick('/provincias')}
+            >
+              {renderTooltipSidebar('Provincias')} 
             </Sidebar.Item>
 
-            <Sidebar.Item href="#" >
-              Municipio
+            <Sidebar.Item 
+              href="/municipios"
+              className={isItemSelected('/municipios')}
+              onClick={() => handleItemClick('/municipios')}
+            >
+              {renderTooltipSidebar(' Municipios')} 
             </Sidebar.Item>
 
           </Sidebar.Collapse>
