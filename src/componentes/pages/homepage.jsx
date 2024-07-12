@@ -1,6 +1,5 @@
 "use client";
 import Layout from "../layout/layout";
-import Skeleton from "../layout/skeleton";
 import fotoFront  from "../../img/image-4.jpg";
 import { Card } from "flowbite-react";
 import {jwtDecode} from 'jwt-decode';

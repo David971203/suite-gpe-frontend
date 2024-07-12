@@ -15,6 +15,9 @@ export const ACTIVIDAD_CDA_INACT = "/actividades-cda/inactive";
 export const SECTOR = "/sector";
 export const MARCA_ACT = "/marcas";
 export const MARCA_INACT = "/marcas/inactive";
+export const MODELO_ACT = "/modelos";
+export const MODELO_INACT = "/modelos/inactive";
+
 
 const Paths = {
   EMPTY,
@@ -33,6 +36,8 @@ const Paths = {
   SECTOR,
   MARCA_ACT,
   MARCA_INACT,
+  MODELO_ACT,
+  MODELO_INACT,
   LOGIN
 };
 

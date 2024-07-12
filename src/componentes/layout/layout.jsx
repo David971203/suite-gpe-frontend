@@ -13,23 +13,24 @@ function Layout({ children }) {
   return (
     <div className=" bg-gray-50 dark:bg-gray-900">
 
-      {/* Navbar */}
       <div className="flex flex-col min-h-full h-screen">
-      <Navbar onToggleSidebar={toggleSidebar} showToggle={true} />
 
+        <Navbar onToggleSidebar={toggleSidebar} showToggle={true} />
 
-      <div className="flex flex-1 overflow-y-auto border-b"> 
-        
-        <Sidebar isOpen={sidebarIsOpen} onToggleSidebar={toggleSidebar} />
-        
-        <main className="flex-1 overflow-y-auto p-4  bg-gray-100 dark:bg-gray-900 border-l  border-gray-300 dark:border-gray-700 ">
-        
-          {children}
-         
-        </main>
-        
-      </div>
-      <FooterComp/>
+        <div className="flex flex-1 overflow-y-auto border-b"> 
+          
+          <Sidebar isOpen={sidebarIsOpen} onToggleSidebar={toggleSidebar} />
+          
+          <main className="flex-1 overflow-y-auto p-4  bg-gray-100 dark:bg-gray-900 border-l  border-gray-300 dark:border-gray-700 ">
+          
+            {children}
+          
+          </main>
+          
+        </div>
+
+        <FooterComp/>
+
       </div>
 
     </div>

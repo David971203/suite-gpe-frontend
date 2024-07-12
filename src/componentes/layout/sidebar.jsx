@@ -70,6 +70,13 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
     }
   }, [location]);
 
+  useEffect(() => {
+    if (location.pathname.startsWith('/modelos')) {
+      setOpenCollapse(1);
+      setSelectedItem(location.pathname);
+    }
+  }, [location]);
+
   const handleCollapseClick = (index) => {
     setOpenCollapse(openCollapse === index ? null : index);
   };
@@ -209,8 +216,12 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
             
             </Sidebar.Item>
 
-            <Sidebar.Item href="#" >
-              Modelo
+            <Sidebar.Item 
+              href="/modelos"
+              className={isItemSelected('/modelos')}
+              onClick={() => handleItemClick('/modelos')}
+            >
+             {renderTooltipSidebar('Modelos')} 
             </Sidebar.Item>
 
             <Sidebar.Item href="#" >

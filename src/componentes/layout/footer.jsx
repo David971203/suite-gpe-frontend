@@ -1,17 +1,20 @@
 "use client";
 
 import { Footer } from "flowbite-react";
+import logo from '../../img/logo.png';
 
 export default function FooterComp() {
   return (
     <Footer container>
-      <Footer.Copyright href="#" by="SITRANS VILLA CLARA" year={new Date().getFullYear()}  />
-      <Footer.LinkGroup>
-        <Footer.Link href="#">About</Footer.Link>
-        <Footer.Link href="#">Privacy Policy</Footer.Link>
-        <Footer.Link href="#">Licensing</Footer.Link>
-        <Footer.Link href="#">Contact</Footer.Link>
-      </Footer.LinkGroup>
+      <Footer.Brand
+        href=""
+        src={logo}
+        alt="Flowbite Logo"
+        name=""
+      />
+      <div className="w-full text-center">
+        <Footer.Copyright by="SITRANS VILLA CLARA" year={new Date().getFullYear()} />
+      </div>
     </Footer>
   );
 }
