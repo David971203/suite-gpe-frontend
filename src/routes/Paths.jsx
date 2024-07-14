@@ -19,6 +19,7 @@ export const MODELO_ACT = "/modelos";
 export const MODELO_INACT = "/modelos/inactive";
 export const PROVINCIAS = "/provincias";
 export const MUNICIPIOS = "/municipios";
+export const TIPO_VEHICULOS = "/tipos-vehiculos";
 
 
 const Paths = {
@@ -42,6 +43,7 @@ const Paths = {
   MODELO_INACT,
   PROVINCIAS,
   MUNICIPIOS,
+  TIPO_VEHICULOS,
   LOGIN
 };
 

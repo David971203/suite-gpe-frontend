@@ -122,15 +122,24 @@ function BreadCrumbComponent() {
             </Breadcrumb>
           );  
       
-      case '/sector':
+        case '/unidades-medida':
         return (
           <Breadcrumb aria-label="Default breadcrumb example">
             <Breadcrumb.Item href="/" icon={HiHome}>
               Inicio
             </Breadcrumb.Item>
-            <Breadcrumb.Item href="/sector">Sectores</Breadcrumb.Item>
+            <Breadcrumb.Item href="/unidades-medida">Unidades de Medida</Breadcrumb.Item>
           </Breadcrumb>
         );
+        case '/tipos-vehiculos':
+          return (
+            <Breadcrumb aria-label="Default breadcrumb example">
+              <Breadcrumb.Item href="/" icon={HiHome}>
+                Inicio
+              </Breadcrumb.Item>
+              <Breadcrumb.Item href="/tipos-vehiculos">Tipos de Vehículos</Breadcrumb.Item>
+            </Breadcrumb>
+          );
         case '/marcas':
           return (
             <Breadcrumb aria-label="Default breadcrumb example">

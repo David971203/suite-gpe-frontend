@@ -23,6 +23,7 @@ import {
   MODELO_INACT,
   PROVINCIAS,
   MUNICIPIOS,
+  TIPO_VEHICULOS,
   LOGIN,
 } from './routes/Paths';
 import HomePage from './componentes/pages/homepage';
@@ -44,6 +45,7 @@ import ModelosActivos from './componentes/pages/modelos/modelos-activos';
 import ModelosInactivos from './componentes/pages/modelos/modelos-inactivos';
 import Provincias from './componentes/pages/provincias/provincias';
 import Municipios from './componentes/pages/municipios/municipios';
+import TipoVehiculos from './componentes/pages/tipos_vehiculos/tipos_vehiculos';
 import Login from './componentes/pages/login';
 import PrivateRoute from './componentes/pages/PrivateRoute';
 import './App.css';
@@ -94,6 +96,8 @@ function App() {
               <Route path={PROVINCIAS} element={<PrivateRoute component={Provincias} />} />
 
               <Route path={MUNICIPIOS} element={<PrivateRoute component={Municipios} />} />
+
+              <Route path={TIPO_VEHICULOS} element={<PrivateRoute component={TipoVehiculos} />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>
