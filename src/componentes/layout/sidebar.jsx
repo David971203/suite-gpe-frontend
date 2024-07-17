@@ -142,7 +142,7 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
             Planificación
           </Sidebar.Item>
           <Sidebar.Item href="#" icon={HiChevronDoubleRight}>
-            Administración
+            Asignación
           </Sidebar.Item>
           <Sidebar.Item href="#" icon={HiOutlineSwitchHorizontal}>
             Traspasos

@@ -55,15 +55,6 @@ function BreadCrumbComponent() {
             <Breadcrumb.Item href="/portadores/inactive">Inactivos</Breadcrumb.Item>
           </Breadcrumb>
         );
-      case '/unidades-medida':
-      return (
-        <Breadcrumb aria-label="Default breadcrumb example">
-          <Breadcrumb.Item href="/" icon={HiHome}>
-            Inicio
-          </Breadcrumb.Item>
-          <Breadcrumb.Item href="/unidades-medida">Unidades de Medida</Breadcrumb.Item>
-        </Breadcrumb>
-      );
       case '/tipo-portadores':
       return (
         <Breadcrumb aria-label="Default breadcrumb example">
@@ -121,7 +112,6 @@ function BreadCrumbComponent() {
               <Breadcrumb.Item href="/actividades-cda/inactive">Inactivas</Breadcrumb.Item>
             </Breadcrumb>
           );  
-      
         case '/unidades-medida':
         return (
           <Breadcrumb aria-label="Default breadcrumb example">
