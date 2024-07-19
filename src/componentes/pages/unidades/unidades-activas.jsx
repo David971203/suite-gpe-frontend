@@ -1,25 +1,30 @@
+"use client";
 import React, { useEffect, useState, useContext } from 'react';
 import { AuthContext } from '../../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { apiUrl } from '../../../utils/apiUrl';
 import { renderWithTooltip } from '../../../utils/renderWithTooltip';
-import { TextInput,Select,Label, Modal } from "flowbite-react";
-import { HiOutlineSearch, HiOutlinePlus, HiOutlineArrowNarrowRight } from "react-icons/hi";
+import { TextInput } from "flowbite-react";
+import { Label, Select} from 'flowbite-react';
+import { Tooltip ,Toast } from 'flowbite-react';
+import { HiOutlineSearch, HiPencil, HiTrash,HiOutlineArrowNarrowRight,HiOutlinePlus,HiOutlineExclamationCircle,HiX,HiCheck,HiEye, HiEyeOff} from "react-icons/hi";
 import Layout from "../../layout/layout";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { PrimeReactProvider } from 'primereact/api';
-import { Button } from "flowbite-react";
+import { Button, Modal } from "flowbite-react";
 import { FilterMatchMode } from 'primereact/api';
-import 'flowbite/dist/flowbite.css';
-import '../styles.css';
 import {TableActionsItemsActive} from '../../../utils/TableActions';
 import ConfirmacionModal from '../../../utils/ConfirmacionModal';
 import ToastNotification from '../../../utils/ToastNotification';
+import { Accordion } from "flowbite-react";
+import { Tabs } from "flowbite-react";
+import 'flowbite/dist/flowbite.css';
+import '../styles.css';
 
-function ActividadesCdaActivos() {
-    const [actividadesCda, setActividadesCda] = useState([]);
+function UnidadesActivas() {
+    const [unidades, setUnidades] = useState([]);
     const [loading, setLoading] = useState(true);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState({
@@ -28,10 +33,16 @@ function ActividadesCdaActivos() {
 
     const [formData, setFormData] = useState({
         nombre: '',
+        codigo_sentai: '',
         estado:'Activo',
-        categoriaCDA_id: '',
+        principal: 0,
+        unidad_padre_id: 0,
+        sector_id: 0
       });
-    const [categorias, setCategorias] = useState([]);
+
+    const [unidadesSelect, setUnidadesSelect] = useState([]);
+    const [unidadesPrincipales, setUnidadesPrincipales] = useState([]);
+    const [sectores, setSectores] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [openNewModal, setOpenNewModal] = useState(false);
     const [openEdtModal, setOpenEdtModal] = useState(false);
@@ -46,9 +57,12 @@ function ActividadesCdaActivos() {
     const resetFormData = () => {
     setFormData({
         nombre: '',
+        codigo_sentai: '',
         estado:'Activo',
-        categoriaCDA_id: '',
-        });
+        principal: 0,
+        unidad_padre_id: 0,
+        sector_id: 0
+    });
     };
   
     const handleInputChange = (e) => {
@@ -58,12 +72,12 @@ function ActividadesCdaActivos() {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        axios.get(`${apiUrl}/categoria_cdas`, {
+        axios.get(`${apiUrl}/unidades`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         })
-        .then(response => setCategorias(response.data))
+        .then(response => setUnidadesSelect(response.data))
         .catch(error => {
             const errorMsg = error.response?.data?.detail || 'Error al actualizar el estado';
             setToastMessage(errorMsg);
@@ -71,25 +85,73 @@ function ActividadesCdaActivos() {
             setTimeout(() => setShowToastERR(false), 5000);
         });
     }, []);
-    const activeCategorias = categorias.filter(categoria => categoria.estado === 'Activo');
 
-    
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        axios.get(`${apiUrl}/unidades_principales`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => setUnidadesPrincipales(response.data))
+        .catch(error => {
+            const errorMsg = error.response?.data?.detail || 'Error al actualizar el estado';
+            setToastMessage(errorMsg);
+            setShowToastERR(true);
+            setTimeout(() => setShowToastERR(false), 5000);
+        });
+    }, []);
+
+    const activeUnidadesSelect = unidadesSelect.filter(unidadSelect => unidadSelect.estado === 'Activo');
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        axios.get(`${apiUrl}/sectors`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => setSectores(response.data))
+        .catch(error => {
+            const errorMsg = error.response?.data?.detail || 'Error al actualizar el estado';
+            setToastMessage(errorMsg);
+            setShowToastERR(true);
+            setTimeout(() => setShowToastERR(false), 5000);
+        });
+    }, []);
+
     //Add
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        if(!(/^\d+(\.\d+)?$/.test(formData.tarifa))){
+            setcolorInputText('failure');
+                setmsgInputText('Para los lugares decimales utilize . solo una vez');
+                
+                setTimeout(() => {
+                    setShowToastERR(false);
+                    setcolorInputText('gray');
+                    setmsgInputText('');
+                }
+                , 5000);
+                
+                return;
+        }
+
         const token = localStorage.getItem('token');
-        axios.post(`${apiUrl}/actividad_cda`, {
+        axios.post(`${apiUrl}/tipo_portador_energetico`, {
             nombre: formData.nombre,
+            tarifa: formData.tarifa,
             estado: formData.estado,
-            categoriaCDA_id: formData.categoriaCDA_id
+            portador_id: formData.portador_id,
+            unidad_medida_id: formData.unidad_medida_id
         }, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         })
         .then(response => {
-            setActividadesCda([ response.data.actividad_cda,...actividadesCda]);
+            settipoPortadores([ response.data.tipo_portador,...tipoPortadores]);
             setToastMessage(response.data.message);
             setShowToastSUCC(true);
             setTimeout(() => setShowToastSUCC(false), 5000);
@@ -134,7 +196,7 @@ function ActividadesCdaActivos() {
     const fetchUserData = async (selectedId) => {
         const token = localStorage.getItem('token'); // Obtener el token del almacenamiento local
         
-        await axios.get(`${apiUrl}/actividad_cda/${selectedId}`, {
+        await axios.get(`${apiUrl}/tipo_portador_energetico/${selectedId}`, {
             headers: {
                 'Authorization': `Bearer ${token}` // Incluir el token en los encabezados
             }
@@ -143,8 +205,10 @@ function ActividadesCdaActivos() {
                 
                 setFormData({
                     nombre: response.data.nombre,
+                    tarifa: response.data.tarifa,
                     estado: response.data.estado,
-                    categoriaCDA_id: response.data.categoriaCDA_id
+                    portador_id: response.data.portador_id,
+                    unidad_medida_id: response.data.unidad_medida_id
                 });
                 
             })
@@ -178,21 +242,35 @@ function ActividadesCdaActivos() {
         e.preventDefault();
 
         
-        
+        if(!(/^\d+(\.\d+)?$/.test(formData.tarifa))){
+            setcolorInputText('failure');
+                setmsgInputText('Para los lugares decimales utilize . solo una vez');
+                
+                setTimeout(() => {
+                    setShowToastERR(false);
+                    setcolorInputText('gray');
+                    setmsgInputText('');
+                }
+                , 5000);
+                
+                return;
+        }
 
         const token = localStorage.getItem('token');
-        axios.put(`${apiUrl}/actividad_cda/${selectedId}`, {
+        axios.put(`${apiUrl}/tipo_portador_energetico/${selectedId}`, {
             nombre: formData.nombre,
+            tarifa: formData.tarifa,
             estado: formData.estado,
-            categoriaCDA_id: formData.categoriaCDA_id
+            portador_id: formData.portador_id,
+            unidad_medida_id: formData.unidad_medida_id
         }, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         })
         .then(response => {
-            setActividadesCda((prevActividadesCda) => 
-                prevActividadesCda.map(actividadCda => actividadCda.id === selectedId ? response.data.actividad_cda : actividadCda)
+            settipoPortadores((prevTipoPortadores) => 
+                prevTipoPortadores.map(tipoPortador => tipoPortador.id === selectedId ? response.data.tipo_portador : tipoPortador)
             );
             setToastMessage(response.data.message);
             setShowToastSUCC(true);
@@ -231,13 +309,13 @@ function ActividadesCdaActivos() {
 
     const confirmDelete = () => {
         const token = localStorage.getItem('token');
-        axios.put(`${apiUrl}/actividad_cda/estado/${selectedId}`, { estado: "Inactivo" }, {
+        axios.put(`${apiUrl}/tipo_portador_energetico/estado/${selectedId}`, { estado: "Inactivo" }, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         })
             .then(response => {
-                setActividadesCda(actividadesCda.filter(actividadCda => actividadCda.id !== selectedId));
+                settipoPortadores(tipoPortadores.filter(tipoPortador => tipoPortador.id !== selectedId));
                 setOpenModal(false);
                 setToastMessage(response.data.message);
                 setShowToastERR(true);
@@ -292,14 +370,14 @@ function ActividadesCdaActivos() {
 
     useEffect(() => {
         const token = localStorage.getItem('token');
-        axios.get(`${apiUrl}/actividad_cdas`, {
+        axios.get(`${apiUrl}/unidades`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
         })
             .then(response => {
-                const sortedActividadesCda = response.data.sort((a, b) => b.id - a.id);
-                setActividadesCda(sortedActividadesCda);
+                const sortedUnidades= response.data.sort((a, b) => b.id - a.id);
+                setUnidades(sortedUnidades);
                 setLoading(false);
             })
             .catch(error => {
@@ -330,8 +408,8 @@ function ActividadesCdaActivos() {
             });
     }, []);
 
-    const activeActividadesCda = actividadesCda.filter(actividadCda => actividadCda.estado === 'Activo');
-    const activeActividadesCdaCount = activeActividadesCda.length;
+    const activeUnidades = unidades.filter(unidad => unidad.estado === 'Activo');
+    const activeUnidadesCount = activeUnidades.length;
 
     const renderLoadingElements = () => (
         [...Array(5)].map((_, i) => (
@@ -345,20 +423,21 @@ function ActividadesCdaActivos() {
         ))
     );
 
-    const renderActividadesCda = () => (
+    const renderUnidades = () => (
         <div className="container mx-auto h-auto px-4">
-            <h5 className="text-2xl font-bold text-cyan-700 dark:text-white">Actividades CDA</h5>
+            <h5 className="text-2xl font-bold text-cyan-700 dark:text-white">Unidades</h5>
             <br />
             <Button onClick={() => setOpenNewModal(true)} className='mb-2'>
-                Nueva Actividad CDA <HiOutlinePlus className="ml-2 h-5 w-5" />
+                Nueva Unidad<HiOutlinePlus className="ml-2 h-5 w-5" />
             </Button>
+            
             <DataTable 
-                value={activeActividadesCda}
+                value={activeUnidades}
                 paginator
                 rows={5}
                 rowsPerPageOptions={[5, 10, 25, 50]}
                 filters={filters}
-                globalFilterFields={['nombre','categoriaCDA.nombre']}
+                globalFilterFields={['nombre','codigo_sentai','principal','unidad_padre.nombre','sector.nombre']}
                 header={renderHeader()}
                 filterDisplay="row"
                 emptyMessage="No hay datos disponibles"
@@ -371,9 +450,27 @@ function ActividadesCdaActivos() {
                     className="p-col text-sm font-medium text-gray-900 px-6 py-4"
                 />
                 <Column 
-                    field="categoriaCDA.nombre" 
-                    header="Categoría CDA" 
-                    body={(rowData) => renderWithTooltip(rowData, 'categoriaCDA.nombre')}
+                    field="codigo_sentai" 
+                    header="Codigo Sentai" 
+                    body={(rowData) => renderWithTooltip(rowData, 'codigo_sentai')} 
+                    className="p-col text-sm font-medium text-gray-900 px-6 py-4"
+                />
+                <Column 
+                    field="principal" 
+                    header="Principal" 
+                    body={(rowData) => rowData.principal == 1? 'Si':'No'}
+                    className="p-col text-sm font-medium text-gray-900 px-6 py-4"
+                />
+                <Column 
+                    field="unidad_padre.nombre" 
+                    header="Unidad Padre"
+                    body={(rowData) => renderWithTooltip(rowData, 'unidad_padre.nombre')}
+                    className="p-col text-sm font-medium text-gray-900 px-6 py-4"
+                />
+                <Column 
+                    field="sector.nombre" 
+                    header="Sector" 
+                    body={(rowData) => renderWithTooltip(rowData, 'sector.nombre')}
                     className="p-col text-sm font-medium text-gray-900 px-6 py-4"
                 />
                 <Column 
@@ -383,30 +480,75 @@ function ActividadesCdaActivos() {
                 />
             </DataTable>
             <div className="flex flex-wrap gap-2">
-                <Button>Actividades CDA Activas: {activeActividadesCdaCount}</Button>
-                <Button href='/actividades-cda/inactive'>
-                    Ver Actividades CDA Inactivas <HiOutlineArrowNarrowRight className="ml-2 h-5 w-5" />
+                <Button>Unidades Activas: {activeUnidadesCount}</Button>
+                <Button href='/tipo-portadores/inactive'>
+                    Ver Unidades Inactivos <HiOutlineArrowNarrowRight className="ml-2 h-5 w-5" />
                 </Button>
             </div>
         </div>
     );
 
+    const renderAccordion = (unidades) => (
+        <Accordion collapseAll>
+          {unidades.map((unidad) => (
+            <Accordion.Panel key={unidad.id}>
+                
+              <Accordion.Title>
+                {unidad.nombre}
+                
+              </Accordion.Title>
+              <Accordion.Content>
+              {unidad.unidades && unidad.unidades.length > 0 ? (
+                  <div className="text-gray-500 dark:text-gray-400">
+                    Unidades Subordinadas
+                  </div>
+                ) : (
+                  <div className="text-gray-500 dark:text-gray-400">
+                    No posee unidades subordinadas
+                  </div>
+                )}
+                {unidad.unidades && unidad.unidades.length > 0 && renderAccordion(unidad.unidades)}
+              </Accordion.Content>
+            </Accordion.Panel>
+          ))}
+        </Accordion>
+      );
+      
+
+      const UnidadesAccordion = ({ unidadesPrincipales }) => {
+        return (
+          <div>
+            {renderAccordion(unidadesPrincipales)}
+          </div>
+        );
+      };
+
     return (
         <Layout>
-            <section className="bg-white dark:bg-gray-800 relative shadow-md rounded-lg mx-auto h-auto">
+            
+            <section className=" bg-white dark:bg-gray-800 relative shadow-md rounded-lg overflow-y-auto">
                 <div role="status" className="w-full p-4 space-y-4 divide-y divide-gray-200 dark:divide-gray-700 md:p-6 dark:border-gray-700">
-                    {loading ? renderLoadingElements() : (
-                        <PrimeReactProvider>
-                            {renderActividadesCda()}
-                        </PrimeReactProvider>
-                    )}
+                <Tabs aria-label="Default tabs" variant="default">
+                    <Tabs.Item active title="Lista" >
+                        {loading ? renderLoadingElements() : (
+                            <PrimeReactProvider>
+                                {renderUnidades()}
+                            </PrimeReactProvider>
+                        )}
+                    </Tabs.Item>
+                    <Tabs.Item title="Estructura" >
+                        <h4 className="text-2xl font-bold text-cyan-700 dark:text-white">Unidades Principales</h4>
+                        <br></br>
+                        <UnidadesAccordion unidadesPrincipales={unidadesPrincipales} />
+                    </Tabs.Item>
+                </Tabs>    
                 </div>
                 <ToastNotification show={showToastSUCC} type="success" message={toastMessage} onClose={() => setShowToastSUCC(false)} />
                 <ToastNotification show={showToastERR} type="error" message={toastMessage} onClose={() => setShowToastERR(false)} />
                 
                 <Modal show={openNewModal}  size='md'onClose={() => {setOpenNewModal(false); resetFormData();}}>
                     <Modal.Header onClose={() => { setOpenNewModal(false); resetFormData(); }}>
-                        Nueva Actividad CDA
+                        Nueva Unidad
                     </Modal.Header>
                     <Modal.Body>
                         <form onSubmit={handleSubmit} className="space-y-4">
@@ -416,13 +558,32 @@ function ActividadesCdaActivos() {
                                 <TextInput id="nombre" name="nombre" maxLength={30} value={formData.nombre} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa el nombre.')} onInput={(e) => e.target.setCustomValidity('')}/>
                             </div>
                             <div>
-                                <Label htmlFor="categoriaCDA_id">Categoría CDA</Label>
-                                <Select id="categoriaCDA_id" name="categoriaCDA_id" value={formData.categoriaCDA_id} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
-                                        <option value="">-Seleccione una Categoría CDA-</option>
-                                        {activeCategorias.map(categoria => (
-                                            <option key={categoria.id} value={categoria.id}>{categoria.nombre}</option>
+                                <Label htmlFor="tarifa">Tarifa</Label>
+                                <TextInput id="tarifa" name="tarifa" min='0'  color={colorInputText}
+                                helperText={
+                                    <>
+                                        <p>{msgInputText}</p> 
+                                    </>
+                                }
+                                onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa el monto de la tarifa, debe ser mayor que  0.')} onInput={(e) => e.target.setCustomValidity('')} aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+                            </div>
+                            <div>
+                                <Label htmlFor="unidad_padre_id">Unidades</Label>
+                                <Select id="unidad_padre_id" name="unidad_padre_id" value={formData.unidad_padre_id} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
+                                        <option value="">-Seleccione una unidad-</option>
+                                        {activeUnidadesSelect.map(unidad => (
+                                            <option key={unidad.id} value={unidad.id}>{unidad.nombre}</option>
                                         ))}
                                 </Select> 
+                            </div>
+                            <div>
+                                <Label htmlFor="sector_id">Sector</Label>
+                                <Select id="sector_id" name="sector_id" value={formData.sector_id} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
+                                        <option value="">-Seleccione un sector-</option>
+                                        {sectores.map(sector => (
+                                            <option key={sector.id} value={sector.id}>{sector.nombre}</option>
+                                        ))}
+                                </Select>
                             </div>
                             
                             <Button type="submit">Guardar</Button>
@@ -432,7 +593,7 @@ function ActividadesCdaActivos() {
 
                 <Modal show={openEdtModal}  size='md'onClose={() => {setOpenEdtModal(false); resetFormData();}}>
                     <Modal.Header onClose={() => { setOpenEdtModal(false); resetFormData(); }}>
-                        Editar Actividad CDA
+                        Editar Tipo Portador Energético
                     </Modal.Header>
                     <Modal.Body>
                         <form onSubmit={handleEdtSubmit} className="space-y-4">
@@ -441,13 +602,32 @@ function ActividadesCdaActivos() {
                                 <TextInput id="nombre" name="nombre" maxLength={30} value={formData.nombre} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa el nombre.')} onInput={(e) => e.target.setCustomValidity('')}/>
                             </div>
                             <div>
-                                <Label htmlFor="categoriaCDA_id">Categoría CDA</Label>
-                                <Select id="categoriaCDA_id" name="categoriaCDA_id" value={formData.categoriaCDA_id} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
-                                        <option value="">-Seleccione una Categoría CDA-</option>
-                                        {activeCategorias.map(categoria => (
-                                            <option key={categoria.id} value={categoria.id}>{categoria.nombre}</option>
+                                <Label htmlFor="tarifa">Tarifa</Label>
+                                <TextInput id="tarifa" name="tarifa" min='0'  color={colorInputText}
+                                helperText={
+                                    <>
+                                        <p>{msgInputText}</p> 
+                                    </>
+                                }
+                                onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa el monto de la tarifa, debe ser mayor que  0.')} onInput={(e) => e.target.setCustomValidity('')} aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+                            </div>
+                            <div>
+                                <Label htmlFor="unidad_padre_id">Unidades</Label>
+                                <Select id="unidad_padre_id" name="unidad_padre_id" value={formData.unidad_padre_id} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
+                                        <option value="">-Seleccione una unidad-</option>
+                                        {activeUnidadesSelect.map(unidad => (
+                                            <option key={unidad.id} value={unidad.id}>{unidad.nombre}</option>
                                         ))}
                                 </Select> 
+                            </div>
+                            <div>
+                                <Label htmlFor="sector_id">Sector</Label>
+                                <Select id="sector_id" name="sector_id" value={formData.sector_id} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
+                                        <option value="">-Seleccione un sector-</option>
+                                        {sectores.map(sector => (
+                                            <option key={sector.id} value={sector.id}>{sector.nombre}</option>
+                                        ))}
+                                </Select>
                             </div>
                             
                             
@@ -456,10 +636,10 @@ function ActividadesCdaActivos() {
                     </Modal.Body>
                 </Modal>    
 
-                <ConfirmacionModal show={openModal} onClose={() => setOpenModal(false)} onConfirm={confirmDelete} msg={'¿Desea eliminar esta actividad CDA?'} />
+                <ConfirmacionModal show={openModal} onClose={() => setOpenModal(false)} onConfirm={confirmDelete} msg={'¿Desea eliminar este tipo de portador?'} />
                 
             </section>
         </Layout>
     );
 }
-export default ActividadesCdaActivos;
+export default UnidadesActivas;

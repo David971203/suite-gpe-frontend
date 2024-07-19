@@ -185,6 +185,15 @@ function BreadCrumbComponent() {
             </Breadcrumb.Item>
             <Breadcrumb.Item href="/municipios">Municipios</Breadcrumb.Item>
           </Breadcrumb>
+        );
+        case '/unidades':
+        return (
+          <Breadcrumb aria-label="Default breadcrumb example">
+            <Breadcrumb.Item href="/" icon={HiHome}>
+              Inicio
+            </Breadcrumb.Item>
+            <Breadcrumb.Item href="/unidades">Unidades</Breadcrumb.Item>
+          </Breadcrumb>
         );    
         default:
         return (

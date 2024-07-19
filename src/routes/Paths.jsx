@@ -20,6 +20,7 @@ export const MODELO_INACT = "/modelos/inactive";
 export const PROVINCIAS = "/provincias";
 export const MUNICIPIOS = "/municipios";
 export const TIPO_VEHICULOS = "/tipos-vehiculos";
+export const UNIDADES_ACT = "/unidades";
 
 
 const Paths = {
@@ -44,6 +45,7 @@ const Paths = {
   PROVINCIAS,
   MUNICIPIOS,
   TIPO_VEHICULOS,
+  UNIDADES_ACT,
   LOGIN
 };
 

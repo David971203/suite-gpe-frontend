@@ -15,6 +15,10 @@ export const renderWithTooltip = (rowData, field) => {
         </Tooltip>
       );
     }
+
+    if(value === null ) {
+      return 'No Posee';
+    }
     return value;
 };
 

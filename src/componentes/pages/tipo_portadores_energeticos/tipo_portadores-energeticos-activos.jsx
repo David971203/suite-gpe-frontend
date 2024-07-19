@@ -98,6 +98,20 @@ function TipoPortadoresActivos() {
     const handleSubmit = (e) => {
         e.preventDefault();
 
+        if(!(/^\d+(\.\d+)?$/.test(formData.tarifa))){
+            setcolorInputText('failure');
+                setmsgInputText('Para los lugares decimales utilize . solo una vez');
+                
+                setTimeout(() => {
+                    setShowToastERR(false);
+                    setcolorInputText('gray');
+                    setmsgInputText('');
+                }
+                , 5000);
+                
+                return;
+        }
+
         const token = localStorage.getItem('token');
         axios.post(`${apiUrl}/tipo_portador_energetico`, {
             nombre: formData.nombre,
@@ -202,7 +216,19 @@ function TipoPortadoresActivos() {
         e.preventDefault();
 
         
-        
+        if(!(/^\d+(\.\d+)?$/.test(formData.tarifa))){
+            setcolorInputText('failure');
+                setmsgInputText('Para los lugares decimales utilize . solo una vez');
+                
+                setTimeout(() => {
+                    setShowToastERR(false);
+                    setcolorInputText('gray');
+                    setmsgInputText('');
+                }
+                , 5000);
+                
+                return;
+        }
 
         const token = localStorage.getItem('token');
         axios.put(`${apiUrl}/tipo_portador_energetico/${selectedId}`, {
@@ -457,7 +483,13 @@ function TipoPortadoresActivos() {
                             </div>
                             <div>
                                 <Label htmlFor="tarifa">Tarifa</Label>
-                                <input type="number" id="tarifa" name="tarifa" min='0' value={formData.tarifa} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa el monto de la tarifa, debe ser mayor que  0.')} onInput={(e) => e.target.setCustomValidity('')} aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+                                <TextInput id="tarifa" name="tarifa" min='0' value={formData.tarifa} color={colorInputText}
+                                helperText={
+                                    <>
+                                        <p>{msgInputText}</p> 
+                                    </>
+                                }
+                                onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa el monto de la tarifa, debe ser mayor que  0.')} onInput={(e) => e.target.setCustomValidity('')} aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
                             </div>
                             <div>
                                 <Label htmlFor="portador_id">Portador</Label>
@@ -495,7 +527,13 @@ function TipoPortadoresActivos() {
                             </div>
                             <div>
                                 <Label htmlFor="tarifa">Tarifa</Label>
-                                <input type="number" id="tarifa" name="tarifa" min='0' value={formData.tarifa} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa el monto de la tarifa, debe ser mayor que  0.')} onInput={(e) => e.target.setCustomValidity('')} aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+                                <TextInput id="tarifa" name="tarifa" min='0' value={formData.tarifa} color={colorInputText}
+                                helperText={
+                                    <>
+                                        <p>{msgInputText}</p> 
+                                    </>
+                                }
+                                onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa el monto de la tarifa, debe ser mayor que  0.')} onInput={(e) => e.target.setCustomValidity('')} aria-describedby="helper-text-explanation" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
                             </div>
                             <div>
                                 <Label htmlFor="portador_id">Portador</Label>

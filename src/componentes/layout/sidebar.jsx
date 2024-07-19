@@ -100,6 +100,13 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
     }
   }, [location]);
 
+  useEffect(() => {
+    if (location.pathname.startsWith('/unidades')) {
+      setOpenCollapse(1);
+      setSelectedItem(location.pathname);
+    }
+  }, [location]);
+
   const handleCollapseClick = (index) => {
     setOpenCollapse(openCollapse === index ? null : index);
   };
@@ -183,6 +190,16 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
               {renderTooltipSidebar('Usuarios')} 
 
               </Sidebar.Item>
+
+              <Sidebar.Item
+                href="/unidades"
+                className={isItemSelected('/unidades')}
+                onClick={() => handleItemClick('/unidades')}
+              >
+              {renderTooltipSidebar('Unidades')} 
+
+              </Sidebar.Item>
+
               <Sidebar.Item
                 href="/portadores"
                 className={isItemSelected('/portadores')}

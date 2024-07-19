@@ -24,6 +24,7 @@ import {
   PROVINCIAS,
   MUNICIPIOS,
   TIPO_VEHICULOS,
+  UNIDADES_ACT,
   LOGIN,
 } from './routes/Paths';
 import HomePage from './componentes/pages/homepage';
@@ -46,6 +47,7 @@ import ModelosInactivos from './componentes/pages/modelos/modelos-inactivos';
 import Provincias from './componentes/pages/provincias/provincias';
 import Municipios from './componentes/pages/municipios/municipios';
 import TipoVehiculos from './componentes/pages/tipos_vehiculos/tipos_vehiculos';
+import UnidadesActivas from './componentes/pages/unidades/unidades-activas';
 import Login from './componentes/pages/login';
 import PrivateRoute from './componentes/pages/PrivateRoute';
 import './App.css';
@@ -98,6 +100,8 @@ function App() {
               <Route path={MUNICIPIOS} element={<PrivateRoute component={Municipios} />} />
 
               <Route path={TIPO_VEHICULOS} element={<PrivateRoute component={TipoVehiculos} />} />
+
+              <Route path={UNIDADES_ACT} element={<PrivateRoute component={UnidadesActivas} />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>
