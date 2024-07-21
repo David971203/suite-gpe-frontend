@@ -1,4 +1,8 @@
 /* styles.css */
+.red-text {
+  color: red;
+}
+
 .p-datatable-gridlines {
     border-collapse: collapse;
     width: 100%;
