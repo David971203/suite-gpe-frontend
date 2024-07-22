@@ -209,6 +209,7 @@ function UsariosInactivos() {
               <Column field="apellido" header="APELLIDOS" body={(rowData) => renderWithTooltip(rowData, 'apellido')} className="p-col text-sm font-medium text-gray-900 px-6 py-4"></Column>
               <Column field="username" header="USUARIO" body={(rowData) => renderWithTooltip(rowData, 'username')}  className="p-col text-sm font-medium text-gray-900 px-6 py-4"></Column>
               <Column field="rol.literal" header="ROL" body={(rowData) => renderWithTooltip(rowData, 'rol.literal')}  className="p-col text-sm font-medium text-gray-900 px-6 py-4"></Column>
+              <Column field="unidad.nombre" header="UNIDAD" body={(rowData) => renderWithTooltip(rowData, 'unidad.nombre')} className="p-col text-sm font-medium text-gray-900 px-6 py-4"></Column>
               <Column body={actionBodyTemplate} header="ACCIONES" className="p-col text-sm font-medium text-gray-900 px-6 py-4" ></Column>
             </DataTable>
             <div className="flex flex-wrap gap-2">
@@ -244,7 +245,7 @@ function UsariosInactivos() {
                 
             </div>
             {showToastSUCC && (
-                    <div className="absolute  top-4 right-4">
+                    <div className="fixed top-24 right-8">
                         <Toast>
                             <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
                             <HiCheck className="h-5 w-5" />
@@ -255,7 +256,7 @@ function UsariosInactivos() {
                     </div>
                 )}
                 {showToastERR && (
-                    <div className="absolute  top-4 right-4">
+                    <div className="fixed top-24 right-8">
                         <Toast>
                             <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
                                 <HiX className="h-5 w-5" />

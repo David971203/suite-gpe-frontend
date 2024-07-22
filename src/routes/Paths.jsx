@@ -21,6 +21,7 @@ export const PROVINCIAS = "/provincias";
 export const MUNICIPIOS = "/municipios";
 export const TIPO_VEHICULOS = "/tipos-vehiculos";
 export const UNIDADES_ACT = "/unidades";
+export const UNIDADES_INACT = "/unidades/inactive";
 
 
 const Paths = {
@@ -46,6 +47,7 @@ const Paths = {
   MUNICIPIOS,
   TIPO_VEHICULOS,
   UNIDADES_ACT,
+  UNIDADES_INACT,
   LOGIN
 };
 

@@ -23,7 +23,7 @@ function UsariosActivos() {
 
     const [users, setUsers] = useState([]);
     const [user, setUser] = useState([]);
-    
+    const [unidadesSelect, setUnidadesSelect] = useState([]);
     const [loading, setLoading] = useState(true);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
     const [filters, setFilters] = useState({
@@ -40,7 +40,8 @@ function UsariosActivos() {
         hashed_password: '',
         confirm_password: '',
         estado: 'Activo',
-        rol_id: ''
+        rol_id: '',
+        unidad_id: 0
       });
     const [showPassword, setShowPassword] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState(null);
@@ -49,8 +50,16 @@ function UsariosActivos() {
     const [toastMessage, setToastMessage] = useState('');
     const [colorInputText, setcolorInputText] = useState('gray');
     const [msgInputText, setmsgInputText] = useState('');
+
+    const [colorSelect, setcolorSelect] = useState('gray');
+    const [msgSelect, setmsgSelect] = useState('');
+
     const { logout } = useContext(AuthContext);
     const navigate = useNavigate();
+
+    const [isUnidadDisabled, setIsUnidadDisabled] = useState(false);
+
+    
    
     const resetFormData = () => {
         setFormData({
@@ -60,11 +69,30 @@ function UsariosActivos() {
             hashed_password: '',
             confirm_password: '',
             estado: 'Activo',
-            rol_id: ''
+            rol_id: '',
+            unidad_id: 0
         });
+
+        setIsUnidadDisabled(false);
     };
 
-    
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        axios.get(`${apiUrl}/unidades`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => setUnidadesSelect(response.data))
+        .catch(error => {
+            const errorMsg = error.response?.data?.detail || 'Error al actualizar el estado';
+            setToastMessage(errorMsg);
+            setShowToastERR(true);
+            setTimeout(() => setShowToastERR(false), 5000);
+        });
+    }, []);
+
+    const activeUnidadesSelect = unidadesSelect.filter(unidadSelect => unidadSelect.estado === 'Activo');
 
     //Add
           
@@ -72,6 +100,8 @@ function UsariosActivos() {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
+
+    
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -83,6 +113,19 @@ function UsariosActivos() {
         .then(response => setRoles(response.data))
         .catch(error => console.error("Error fetching roles:", error));
     }, []);
+
+    const handleRoleChange = (e) => {
+        const selectedRoleId = e.target.value;
+        
+        
+        if (selectedRoleId === '1') {
+            setIsUnidadDisabled(true);
+        } else {
+            setIsUnidadDisabled(false);
+        }
+
+        handleInputChange(e);
+    };
 
     const validatePassword = (password) => {
         const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,16}$/;
@@ -118,6 +161,24 @@ function UsariosActivos() {
             return;
         }
 
+        
+        if(parseInt(formData.rol_id) !== 1 && parseInt(formData.unidad_id) === 0){
+            setcolorSelect('failure');
+            setmsgSelect('Debe seleccionar una unidad sino tiene rol Administrador!!');
+            
+            setTimeout(() => {
+                setShowToastERR(false);
+                setcolorSelect('gray');
+                setmsgSelect('');
+            }, 5000);
+            return;
+        }
+
+        let uni_tmp = 0;
+        if(parseInt(formData.rol_id) !== 1){
+            uni_tmp = parseInt(formData.unidad_id);
+        }
+
         const token = localStorage.getItem('token');
         axios.post(`${apiUrl}/user`, {
             nombre: formData.nombre,
@@ -125,7 +186,8 @@ function UsariosActivos() {
             username: formData.username,
             hashed_password: formData.hashed_password,
             estado: formData.estado,
-            rol_id: formData.rol_id
+            rol_id: formData.rol_id,
+            unidad_id: uni_tmp
         }, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -175,13 +237,19 @@ function UsariosActivos() {
 
     const fetchUserData = async (selectedUserId) => {
         const token = localStorage.getItem('token'); // Obtener el token del almacenamiento local
-        
+        let uni = 0;
         await axios.get(`${apiUrl}/user/${selectedUserId}`, {
             headers: {
                 'Authorization': `Bearer ${token}` // Incluir el token en los encabezados
             }
         })
             .then(response => {
+
+                if(response.data.unidad_id !== null)
+                    uni = response.data.unidad_id;
+
+                if(response.data.rol_id === 1)
+                    setIsUnidadDisabled(true);
                 
                 setFormData({
                     nombre: response.data.nombre,
@@ -190,8 +258,10 @@ function UsariosActivos() {
                     hashed_password: '',
                     confirm_password: '',
                     estado: response.data.estado,
-                    rol_id: response.data.rol_id
+                    rol_id: response.data.rol_id,
+                    unidad_id: uni
                 });
+                
                 
             })
             .catch(error => {
@@ -251,15 +321,41 @@ function UsariosActivos() {
             }
         }
         
+        console.log(formData.rol_id);
+        console.log(formData.unidad_id);
+        if(parseInt(formData.rol_id) !== 1 && parseInt(formData.unidad_id) === 0){
+            setcolorSelect('failure');
+            setmsgSelect('Debe seleccionar una unidad sino tiene rol Administrador!!');
+            
+            setTimeout(() => {
+                setShowToastERR(false);
+                setcolorSelect('gray');
+                setmsgSelect('');
+            }, 5000);
+            return;
+        }
 
         const token = localStorage.getItem('token');
+        let uni_p = 0;
+        
+
+        
+        if(parseInt(formData.rol_id) !== 1){
+            if(formData.unidad_id === null)
+                uni_p = 0;
+            else
+                uni_p = parseInt(formData.unidad_id); 
+        }
+
+        console.log(uni_p);    
         axios.put(`${apiUrl}/user/${selectedUserId}`, {
             nombre: formData.nombre,
             apellido: formData.apellido,
             username: formData.username,
             hashed_password: formData.hashed_password,
             estado: formData.estado,
-            rol_id: formData.rol_id
+            rol_id: formData.rol_id,
+            unidad_id: uni_p
         }, {
             headers: {
                 'Authorization': `Bearer ${token}`
@@ -471,6 +567,7 @@ function UsariosActivos() {
                     <Column field="apellido" header="APELLIDOS" body={(rowData) => renderWithTooltip(rowData, 'apellido')} className="p-col text-sm font-medium text-gray-900 px-6 py-4"></Column>
                     <Column field="username" header="USUARIO" body={(rowData) => renderWithTooltip(rowData, 'username')} className="p-col text-sm font-medium text-gray-900 px-6 py-4"></Column>
                     <Column field="rol.literal" header="ROL" body={(rowData) => renderWithTooltip(rowData, 'rol.literal')} className="p-col text-sm font-medium text-gray-900 px-6 py-4"></Column>
+                    <Column field="unidad.nombre" header="UNIDAD" body={(rowData) => renderWithTooltip(rowData, 'unidad.nombre')} className="p-col text-sm font-medium text-gray-900 px-6 py-4"></Column>
                     <Column body={actionBodyTemplate} header="ACCIONES" className="p-col text-sm font-medium text-gray-900 px-6 py-4"></Column>
                 </DataTable>
                 <div className="flex flex-wrap  gap-2">
@@ -502,7 +599,7 @@ function UsariosActivos() {
                     {content}
                 </div>
                 {showToastSUCC && (
-                    <div className="absolute  top-4 right-4">
+                    <div className="fixed top-24 right-8">
                         <Toast>
                             <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-500 dark:bg-green-800 dark:text-green-200">
                             <HiCheck className="h-5 w-5" />
@@ -513,7 +610,7 @@ function UsariosActivos() {
                     </div>
                 )}
                 {showToastERR && (
-                    <div className="absolute  top-4 right-4">
+                    <div className="fixed top-24 right-8">
                         <Toast>
                             <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-red-100 text-red-500 dark:bg-red-800 dark:text-red-200">
                                 <HiX className="h-5 w-5" />
@@ -556,14 +653,26 @@ function UsariosActivos() {
                                     } 
                                     minLength={8} maxLength={16} type="password" value={formData.confirm_password} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, confirma tu contraseña debe de tener de 8 a 16 caracteres.')} onInput={(e) => e.target.setCustomValidity('')}/>
                             </div>
+                            
                             <div>
                                 <Label htmlFor="rol_id">Rol</Label>
-                                <Select id="rol_id" name="rol_id" value={formData.rol_id} onChange={handleInputChange} required  onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
+                                <Select id="rol_id" name="rol_id" value={formData.rol_id}  onChange={handleRoleChange}  required  onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
                                     <option value="">-Seleccione un rol-</option>
                                     {roles.map(rol => (
                                         <option key={rol.id} value={rol.id}>{rol.literal}</option>
                                     ))}
                                 </Select>
+                            </div>
+
+                            <div>
+                                <Label htmlFor="unidad_padre_id">Unidad</Label>
+                                <Select id="unidad_id" name="unidad_id" value={formData.unidad_id} color={colorSelect} onChange={handleInputChange} disabled={isUnidadDisabled} onInput={(e) => e.target.setCustomValidity('')}>
+                                    <option value="0">-Seleccione una unidad-</option>
+                                    {activeUnidadesSelect.map(unidad => (
+                                        <option key={unidad.id} value={unidad.id}>{unidad.nombre}</option>
+                                    ))}
+                                </Select>
+                                <p className="red-text">{msgSelect}</p>
                             </div>
                             <Button type="submit">Guardar</Button>
                         </form>
@@ -614,14 +723,14 @@ function UsariosActivos() {
                                 {
                                 user === 'admin' ? 
                                     
-                                    <Select id="rol_id" name="rol_id" value={formData.rol_id} onChange={handleInputChange} required disabled readOnly onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
+                                    <Select id="rol_id" name="rol_id" value={formData.rol_id} onChange={handleRoleChange} required disabled readOnly onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
                                         <option value="">-Seleccione un rol-</option>
                                         {roles.map(rol => (
                                             <option key={rol.id} value={rol.id}>{rol.literal}</option>
                                         ))}
                                     </Select> 
                                 : 
-                                    <Select id="rol_id" name="rol_id" value={formData.rol_id} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
+                                    <Select id="rol_id" name="rol_id" value={formData.rol_id} onChange={handleRoleChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
                                         <option value="">-Seleccione un rol-</option>
                                         {roles.map(rol => (
                                             <option key={rol.id} value={rol.id}>{rol.literal}</option>
@@ -629,6 +738,27 @@ function UsariosActivos() {
                                     </Select>
                                 }     
                                 
+                            </div>
+                            <div>
+                                {
+                                user === 'admin' ?
+
+                                    <><Label htmlFor="unidad_padre_id">Unidad</Label>
+                                        <Select id="unidad_id" name="unidad_id" value={formData.unidad_id} disabled readOnly color={colorSelect}  onChange={handleInputChange} onInput={(e) => e.target.setCustomValidity('')}>
+                                            <option value="0">-Seleccione una unidad-</option>
+                                            {activeUnidadesSelect.map(unidad => (
+                                                <option key={unidad.id} value={unidad.id}>{unidad.nombre}</option>
+                                            ))}
+                                        </Select><p className="red-text">{msgSelect}</p></>
+                                :
+                                    <><Label htmlFor="unidad_padre_id">Unidad</Label>
+                                        <Select id="unidad_id" name="unidad_id" value={formData.unidad_id}  color={colorSelect} onChange={handleInputChange} disabled={isUnidadDisabled} onInput={(e) => e.target.setCustomValidity('')}>
+                                            <option value="0">-Seleccione una unidad-</option>
+                                            {activeUnidadesSelect.map(unidad => (
+                                                <option key={unidad.id} value={unidad.id}>{unidad.nombre}</option>
+                                            ))}
+                                        </Select><p className="red-text">{msgSelect}</p></>
+                                }    
                             </div>
                             <Button type="submit">Guardar</Button>
                         </form>

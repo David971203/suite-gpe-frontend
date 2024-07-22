@@ -90,7 +90,7 @@ function BreadCrumbComponent() {
             Inicio
           </Breadcrumb.Item>
           <Breadcrumb.Item href="/categorias-cda">Categorías CDA</Breadcrumb.Item>
-          <Breadcrumb.Item href="/categorias-cda/inactive">Inactivos</Breadcrumb.Item>
+          <Breadcrumb.Item href="/categorias-cda/inactive">Inactivas</Breadcrumb.Item>
         </Breadcrumb>
       );
       case '/actividades-cda':
@@ -193,6 +193,16 @@ function BreadCrumbComponent() {
               Inicio
             </Breadcrumb.Item>
             <Breadcrumb.Item href="/unidades">Unidades</Breadcrumb.Item>
+          </Breadcrumb>
+        );
+        case '/unidades/inactive':
+        return (
+          <Breadcrumb aria-label="Default breadcrumb example">
+            <Breadcrumb.Item href="/" icon={HiHome}>
+              Inicio
+            </Breadcrumb.Item>
+            <Breadcrumb.Item href="/unidades">Unidades</Breadcrumb.Item>
+            <Breadcrumb.Item href="/unidades/inactive">Inactivas</Breadcrumb.Item>
           </Breadcrumb>
         );    
         default:

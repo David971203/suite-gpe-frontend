@@ -551,7 +551,7 @@ function UnidadesActivas() {
             </DataTable>
             <div className="flex flex-wrap gap-2">
                 <Button>Unidades Activas: {activeUnidadesCount}</Button>
-                <Button href='/tipo-portadores/inactive'>
+                <Button href='/unidades/inactive'>
                     Ver Unidades Inactivas <HiOutlineArrowNarrowRight className="ml-2 h-5 w-5" />
                 </Button>
             </div>
@@ -607,10 +607,10 @@ function UnidadesActivas() {
             // Restablecer el valor del select de unidad padre
             formData.principal = 1;
             handleInputChange({ target: { name: 'unidad_padre_id', value: '0' } });
-            console.log(formData.principal);
+            
         }else{
             formData.principal = 0;
-            console.log(formData.principal);
+            
         }
     };
 
@@ -620,11 +620,11 @@ function UnidadesActivas() {
             // Restablecer el valor del select de unidad padre
             formData.principal = 1;
             handleInputChange({ target: { name: 'unidad_padre_id', value: '0' } });
-            console.log(formData.principal);
+           
         }else{
             formData.principal = 0;
             handleInputChange({ target: { name: 'unidad_padre_id', value: '0' } });
-            console.log(formData.principal);
+            
         }
     };
 
