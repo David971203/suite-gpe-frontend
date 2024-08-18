@@ -14,7 +14,11 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
   const [openCollapse, setOpenCollapse] = useState(null);
   const [selectedItem, setSelectedItem] = useState('');
 
-  
+  const token = localStorage.getItem('token');
+  const decodedToken = jwtDecode(token);
+  const rol = decodedToken.role;
+  const unidad_name = decodedToken.unidad_name;
+  const unidad_id = decodedToken.unidad_id;
 
   useEffect(() => {
     if (location.pathname.startsWith('/users')) {
@@ -107,6 +111,38 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
     }
   }, [location]);
 
+  useEffect(() => {
+    if (location.pathname ==='/parque-vehiculos' ) {
+      setOpenCollapse(2);
+      setSelectedItem(location.pathname);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    if (location.pathname === '/parque-vehiculos-admin' ) {
+      setOpenCollapse(1);
+      setSelectedItem(location.pathname);
+    }
+  }, [location]);
+
+  
+    if(rol === 'ROLE_ADMIN'){
+      useEffect(() => {
+        if (location.pathname === '/parque-vehiculos/inactive' ) {
+          setOpenCollapse(1);
+          setSelectedItem('/parque-vehiculos-admin');
+        }
+      }, [location]);
+    }else{
+      useEffect(() => {
+        if (location.pathname ==='/parque-vehiculos/inactive' ) {
+          setOpenCollapse(2);
+          setSelectedItem('/parque-vehiculos');
+        }
+      }, [location]);
+    }
+  
+
   const handleCollapseClick = (index) => {
     setOpenCollapse(openCollapse === index ? null : index);
   };
@@ -120,9 +156,7 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
     return selectedItem.startsWith( href) ? 'border border-cyan-700' : '';
   };
 
-  const token = localStorage.getItem('token');
-  const decodedToken = jwtDecode(token);
-  const rol = decodedToken.role
+
 
   return (
   
@@ -131,7 +165,7 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
       id="sidebar"
       
       aria-label="Sidebar with multi-level dropdown example"
-      className={` transition-transform duration-300  ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} fixed md:static top-0 left-0 h-full z-40 border-r border-gray-300 dark:border-gray-700`}
+      className={` transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} fixed md:static top-0 left-0 h-full z-40 border-r border-gray-300 dark:border-gray-700`}
     >
       <div className="py-5 block sm:hidden pb-3">
         <h5 id="sidebar-label" className="text-base font-semibold text-gray-500 uppercase dark:text-gray-400">Menú</h5>
@@ -158,21 +192,33 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
             Control
           </Sidebar.Item>
 
-          <Sidebar.Collapse
-            icon={HiCog}
-            label="Configuración"
-            open={openCollapse === 2}
-            onClick={() => handleCollapseClick(2)}
-          >
-            <Sidebar.Item
-              href="#portadores2"
-              className={isItemSelected('#portadores2')}
-              onClick={() => handleItemClick('#portadores2')}
+          {
+            rol === 'ROLE_ENERGETICO' ?
+            <Sidebar.Collapse
+              icon={HiCog}
+              label="Configuración"
+              open={openCollapse === 2}
+              onClick={() => handleCollapseClick(2)}
             >
-              Portadores Energéticos
-            </Sidebar.Item>
-          </Sidebar.Collapse>
-
+              <Sidebar.Item
+                href="/parque-vehiculos"
+                className={isItemSelected('/parque-vehiculos')}
+                onClick={() => handleItemClick('/parque-vehiculos')}
+              >
+                Parque de Vehículos
+              </Sidebar.Item>
+              <Sidebar.Item
+                //href="#portadores2"
+                //className={isItemSelected('#portadores2')}
+                //onClick={() => handleItemClick('#portadores2')}
+              >
+                Mi Unidad
+              </Sidebar.Item>
+            </Sidebar.Collapse>
+            :
+            null
+          }
+          
           {
             rol === 'ROLE_ADMIN' ?
             <Sidebar.Collapse
@@ -249,6 +295,15 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
                 onClick={() => handleItemClick('/tipos-vehiculos')}
               >
               {renderTooltipSidebar('Tipos de Vehículos')} 
+                
+              </Sidebar.Item>
+
+              <Sidebar.Item
+                href="/parque-vehiculos-admin"
+                className={isItemSelected('/parque-vehiculos-admin')}
+                onClick={() => handleItemClick('/parque-vehiculos-admin')}
+              >
+              {renderTooltipSidebar('Vehículos')} 
                 
               </Sidebar.Item>
 

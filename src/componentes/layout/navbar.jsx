@@ -59,6 +59,18 @@ function NavbarComponent({ showToggle, onToggleSidebar }) {
   const decodedToken = jwtDecode(token);
   const nombre = decodedToken.name;
   const user = decodedToken.sub;
+  let rol = '';
+  if(decodedToken.role === 'ROLE_USER'){
+    rol = 'Usuario';
+  }
+
+  if(decodedToken.role === 'ROLE_ENERGETICO'){
+    rol = 'Energético';
+  }
+
+  if(decodedToken.role === 'ROLE_ADMIN'){
+    rol = 'Administrador'
+  }
 
   const [formData, setFormData] = useState({
     actual: '',
@@ -170,7 +182,7 @@ function NavbarComponent({ showToggle, onToggleSidebar }) {
       }
       <Navbar.Brand href="/">
         <img src={logo} className="mr-3 h-6 sm:h-9" alt="Flowbite React Logo" />
-        <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">SUIETE-GPE</span>
+        <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">SUITE-GPE</span>
       </Navbar.Brand>
       <BreadCrumb />
       <div className="flex md:order-2">
@@ -186,7 +198,7 @@ function NavbarComponent({ showToggle, onToggleSidebar }) {
         >
           <Dropdown.Header>
             <span className="block text-sm">{nombre}</span>
-            <span className="block truncate text-sm font-medium">{user}</span>
+            <span className="block truncate text-sm font-medium">{user} - {rol}</span>
           </Dropdown.Header>
           <Dropdown.Item>Ver Perfil</Dropdown.Item>
           <Dropdown.Item onClick={() => setOpenNewModal(true)} >Cambiar Contraseña</Dropdown.Item>

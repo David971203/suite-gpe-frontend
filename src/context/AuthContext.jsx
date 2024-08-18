@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('token', response.data.access_token);
         // Actualizar el estado de autenticación
         setAuth({ token: response.data.access_token });
-        console.log('Inicio de sesión exitoso. Token:', response.data.access_token);
+        
         
          
         

@@ -26,6 +26,9 @@ import {
   TIPO_VEHICULOS,
   UNIDADES_ACT,
   UNIDADES_INACT,
+  PARQUE_VEHICULOS,
+  PARQUE_VEHICULOS_ADMIN,
+  PARQUE_VEHICULOS_INACT,
   LOGIN,
 } from './routes/Paths';
 import HomePage from './componentes/pages/homepage';
@@ -50,6 +53,8 @@ import Municipios from './componentes/pages/municipios/municipios';
 import TipoVehiculos from './componentes/pages/tipos_vehiculos/tipos_vehiculos';
 import UnidadesActivas from './componentes/pages/unidades/unidades-activas';
 import UnidadesInactivas from './componentes/pages/unidades/unidades-inactivas';
+import ParqueVehiculosActivos from './componentes/pages/parque_vehiculos/parque_vehiculos-activos';
+import ParqueVehiculosInactivos from './componentes/pages/parque_vehiculos/parque_vehiculos-inactivos';
 import Login from './componentes/pages/login';
 import PrivateRoute from './componentes/pages/PrivateRoute';
 import './App.css';
@@ -105,6 +110,10 @@ function App() {
 
               <Route path={UNIDADES_ACT} element={<PrivateRoute component={UnidadesActivas} />} />
               <Route path={UNIDADES_INACT} element={<PrivateRoute component={UnidadesInactivas} />} />
+
+              <Route path={PARQUE_VEHICULOS} element={<PrivateRoute component={ParqueVehiculosActivos} />} />
+              <Route path={PARQUE_VEHICULOS_ADMIN} element={<PrivateRoute component={ParqueVehiculosActivos} />} />
+              <Route path={PARQUE_VEHICULOS_INACT} element={<PrivateRoute component={ParqueVehiculosInactivos} />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

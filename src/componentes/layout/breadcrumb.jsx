@@ -4,10 +4,12 @@
 import { Breadcrumb } from "flowbite-react";
 import { HiHome } from "react-icons/hi";
 import { useLocation } from 'react-router-dom';
-
+import {jwtDecode} from 'jwt-decode';
 function BreadCrumbComponent() {
   const location = useLocation();
-
+const token = localStorage.getItem('token');
+  const decodedToken = jwtDecode(token);
+  const rol = decodedToken.role;
   switch(location.pathname){
     case '/':
       return (
@@ -130,6 +132,40 @@ function BreadCrumbComponent() {
               <Breadcrumb.Item href="/tipos-vehiculos">Tipos de Vehículos</Breadcrumb.Item>
             </Breadcrumb>
           );
+        case '/parque-vehiculos-admin':
+          return (
+            <Breadcrumb aria-label="Default breadcrumb example">
+              <Breadcrumb.Item href="/" icon={HiHome}>
+                Inicio
+              </Breadcrumb.Item>
+              <Breadcrumb.Item href="/parque-vehiculos-admin">Vehículos</Breadcrumb.Item>
+            </Breadcrumb>
+          );
+        case '/parque-vehiculos':
+          return (
+            <Breadcrumb aria-label="Default breadcrumb example">
+              <Breadcrumb.Item href="/" icon={HiHome}>
+                Inicio
+              </Breadcrumb.Item>
+              <Breadcrumb.Item href="/parque-vehiculos">Parque de  Vehículos</Breadcrumb.Item>
+            </Breadcrumb>
+          );
+          case '/parque-vehiculos/inactive':
+            return (
+              <Breadcrumb aria-label="Default breadcrumb example">
+                <Breadcrumb.Item href="/" icon={HiHome}>
+                  Inicio
+                </Breadcrumb.Item>
+                {
+                    rol === 'ROLE_ADMIN' ?
+                    <Breadcrumb.Item href="/parque-vehiculos-admin">Vehículos</Breadcrumb.Item>
+                : 
+                    <Breadcrumb.Item href="/parque-vehiculos">Parque de  Vehículos</Breadcrumb.Item>
+                }
+                
+                <Breadcrumb.Item href="/parque-vehiculos/inactive">Vehículos Inactivos</Breadcrumb.Item>
+              </Breadcrumb>
+            );
         case '/marcas':
           return (
             <Breadcrumb aria-label="Default breadcrumb example">

@@ -15,6 +15,7 @@ import { Column } from 'primereact/column';
 import { PrimeReactProvider } from 'primereact/api';
 import { Button, Modal } from "flowbite-react";
 import { FilterMatchMode } from 'primereact/api';
+import {jwtDecode} from 'jwt-decode';
 import 'flowbite/dist/flowbite.css';
 import '../styles.css';
 
@@ -370,6 +371,15 @@ function UsariosActivos() {
             setTimeout(() => setShowToastSUCC(false), 5000);
             setOpenEdtModal(false);
             resetFormData();
+            const token = localStorage.getItem('token');
+            const decodedToken = jwtDecode(token);
+            const id = decodedToken.id
+            if(id === selectedUserId ){
+                
+                setTimeout(() => {logout()}, 3000);
+                
+            }
+                
         })
         .catch(error => {
             setOpenEdtModal(false);
@@ -413,6 +423,13 @@ function UsariosActivos() {
                 setToastMessage(response.data.message);
                 setShowToastERR(true); // Mostrar Toast
                 setTimeout(() => setShowToastERR(false), 5000);
+                const token = localStorage.getItem('token');
+                const decodedToken = jwtDecode(token);
+                const id = decodedToken.id
+                if(id === selectedUserId){
+                    setTimeout(() => {logout()}, 3000);
+                    
+            }
             })
             .catch(error => {
               setOpenModal(false);
