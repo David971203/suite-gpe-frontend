@@ -29,6 +29,9 @@ import {
   PARQUE_VEHICULOS,
   PARQUE_VEHICULOS_ADMIN,
   PARQUE_VEHICULOS_INACT,
+  TARJETAS_MAGNETICAS,
+  ASOCIAR_ACTIVIDAD,
+  PLANIFICACION_CDA001,
   LOGIN,
 } from './routes/Paths';
 import HomePage from './componentes/pages/homepage';
@@ -55,6 +58,9 @@ import UnidadesActivas from './componentes/pages/unidades/unidades-activas';
 import UnidadesInactivas from './componentes/pages/unidades/unidades-inactivas';
 import ParqueVehiculosActivos from './componentes/pages/parque_vehiculos/parque_vehiculos-activos';
 import ParqueVehiculosInactivos from './componentes/pages/parque_vehiculos/parque_vehiculos-inactivos';
+import TarjetasMagneticas from './componentes/pages/tarjetas-magneticas/tarjetas-magneticas';
+import AsociarActividadesCda from './componentes/pages/asociar-actividades/asociar-actividades';
+import PlanificacionCDA from './componentes/pages/planificacion/planificacion-cda';
 import Login from './componentes/pages/login';
 import PrivateRoute from './componentes/pages/PrivateRoute';
 import './App.css';
@@ -114,6 +120,13 @@ function App() {
               <Route path={PARQUE_VEHICULOS} element={<PrivateRoute component={ParqueVehiculosActivos} />} />
               <Route path={PARQUE_VEHICULOS_ADMIN} element={<PrivateRoute component={ParqueVehiculosActivos} />} />
               <Route path={PARQUE_VEHICULOS_INACT} element={<PrivateRoute component={ParqueVehiculosInactivos} />} />
+
+              <Route path={TARJETAS_MAGNETICAS} element={<PrivateRoute component={TarjetasMagneticas} />} />
+
+              <Route path={ASOCIAR_ACTIVIDAD} element={<PrivateRoute component={AsociarActividadesCda} />} />
+
+              <Route path={PLANIFICACION_CDA001} element={<PrivateRoute component={PlanificacionCDA} />} />
+
           </Routes>
         </BrowserRouter>
       </AuthProvider>

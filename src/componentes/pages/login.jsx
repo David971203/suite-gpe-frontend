@@ -9,6 +9,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { Toast } from 'flowbite-react';
 import { HiX  } from "react-icons/hi";
 import { HiEye, HiEyeOff } from 'react-icons/hi';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
   const [username, setUsername] = useState('');

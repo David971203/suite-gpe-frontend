@@ -25,6 +25,9 @@ export const UNIDADES_INACT = "/unidades/inactive";
 export const PARQUE_VEHICULOS = "/parque-vehiculos"
 export const PARQUE_VEHICULOS_ADMIN = "/parque-vehiculos-admin"
 export const PARQUE_VEHICULOS_INACT = "/parque-vehiculos/inactive"
+export const TARJETAS_MAGNETICAS = "/tarjetas-magneticas"
+export const ASOCIAR_ACTIVIDAD = "/asociar-actividad"
+export const PLANIFICACION_CDA001 = "/planificacion-cda"
 
 
 const Paths = {
@@ -54,6 +57,9 @@ const Paths = {
   PARQUE_VEHICULOS,
   PARQUE_VEHICULOS_ADMIN,
   PARQUE_VEHICULOS_INACT,
+  TARJETAS_MAGNETICAS,
+  ASOCIAR_ACTIVIDAD,
+  PLANIFICACION_CDA001,
   LOGIN
 };
 

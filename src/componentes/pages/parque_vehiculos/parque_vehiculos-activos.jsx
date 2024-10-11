@@ -5,7 +5,7 @@ import axios from 'axios';
 import { apiUrl } from '../../../utils/apiUrl';
 import { renderWithTooltip } from '../../../utils/renderWithTooltip';
 import { TextInput,Select,Label, Textarea ,Modal } from "flowbite-react";
-import { HiOutlineSearch, HiOutlinePlus, HiOutlineArrowNarrowRight } from "react-icons/hi";
+import { HiOutlineSearch, HiOutlinePlus, HiOutlineArrowNarrowRight,HiOutlineDownload  } from "react-icons/hi";
 import Layout from "../../layout/layout";
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -17,7 +17,10 @@ import '../styles.css';
 import {TableActionsItemsActive} from '../../../utils/TableActions';
 import ConfirmacionModal from '../../../utils/ConfirmacionModal';
 import ToastNotification from '../../../utils/ToastNotification';
+import Select2 from 'react-select'
+import { Link } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
+
 
 function ParqueVehiculosActivos() {
     const token = localStorage.getItem('token');
@@ -32,6 +35,8 @@ function ParqueVehiculosActivos() {
     const [filters, setFilters] = useState({
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     });
+
+    const [isSearchable, setIsSearchable] = useState(true);
 
     const [formData, setFormData] = useState({
         no_vehiculo: '',
@@ -77,6 +82,7 @@ function ParqueVehiculosActivos() {
     const [marcas, setMarcas] = useState([]);
     const [modelos, setModelos] = useState([]);
     const [tipoPortadores, settipoPortadores] = useState([]);
+    const [actividadesCda, setActividadesCda] = useState([]);
     const [unidades, setUnidades] = useState([]);
 
     const [openModal, setOpenModal] = useState(false);
@@ -185,6 +191,53 @@ function ParqueVehiculosActivos() {
     }, []);
 
     const activeTipoPortadores = tipoPortadores.filter(tipoPortadore => tipoPortadore.estado === 'Activo');
+
+    //actividades de cda
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        axios.get(`${apiUrl}/unidades_actividades/${unidad_id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(response => {
+                const sortedActividadesCda = response.data.sort((a, b) => b.id - a.id);
+                setActividadesCda(sortedActividadesCda);
+                setLoading(false);
+            })
+            .catch(error => {
+                const errorMsg = error.response?.data?.detail || 'Error al cargar los datos';
+                if (errorMsg === 'Could not validate credentials') {
+                    setToastMessage('Su sesión ha expirado, por favor ingrese de nuevo');
+                    setShowToastERR(true);
+                    setTimeout(() => {
+                        setShowToastERR(false);
+                        localStorage.setItem('rol', '');
+                        logout();
+                        navigate('/login');
+                    }, 3000);
+                } else {
+                    setToastMessage(errorMsg);
+                    setShowToastERR(true);
+                    setTimeout(() => {
+                        setShowToastERR(false);
+                        if (error.response.data.detail === 'No tiene permisos para acceder a esta ruta') {
+                        // Token inválido o expirado, redirigir a la página de inicio de sesión
+                        
+                        navigate('/');
+                        }
+                    }, 3000); 
+                }
+                setLoading(false);
+                setTimeout(() => setShowToastERR(false), 5000);
+            });
+    }, []);
+
+    const activeActividadesCda = actividadesCda.filter(actividadCda => actividadCda.estado === 'Activo');
+    const options = activeActividadesCda.map(actividad => ({
+        value: actividad.id,
+        label: actividad.nombre
+      }));
     
     //unidades
     let activeUnidades = null;
@@ -332,6 +385,7 @@ function ParqueVehiculosActivos() {
         setOpenEdtModal(true);
         
     };
+
     useEffect(() => {
         if (selectedId !== null) {
             fetchUserData(selectedId);
@@ -608,6 +662,33 @@ function ParqueVehiculosActivos() {
                 }
             });
     };
+    
+    //Excel 
+    const handleDownloadExcel = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios({
+                url: apiUrl+'/vehiculo_unidad_excel/'+unidad_id, // Cambia a tu ruta de la API
+                method: 'GET',
+                responseType: 'blob', // Importante para obtener el archivo como blob
+                headers: {
+                    'Authorization': `Bearer ${token}`  // Incluye tu token si es necesario
+                }
+            });
+    
+            // Crear un enlace para descargar el archivo
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'Parque de Vehículos '+unidad_name+'.xlsx');  // Nombre del archivo
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+    
+        } catch (error) {
+            console.error('Error al descargar el archivo:', error);
+        }
+    };
 
     //Tabla
     const actionBodyTemplate = (rowData) => (
@@ -745,10 +826,16 @@ function ParqueVehiculosActivos() {
             }
             
             <br />
-            <Button onClick={() => setOpenNewModal(true)} className='mb-2'>
-                Nuevo Vehículo <HiOutlinePlus className="ml-2 h-5 w-5" />
-            </Button>
-            
+            <div className="flex space-x-4 mb-2">
+                <Button onClick={() => setOpenNewModal(true)} className="mb-2">
+                    Nuevo Vehículo <HiOutlinePlus className="ml-2 h-5 w-5" />
+                </Button>
+
+                <Button onClick={handleDownloadExcel} className="mb-2">
+                    Descargar Excel <HiOutlineDownload className="ml-2 h-5 w-5" />
+                </Button>
+            </div>
+
             <DataTable 
                 value={activeVehiculos}
                 paginator
@@ -810,9 +897,11 @@ function ParqueVehiculosActivos() {
             </DataTable>
             <div className="flex flex-wrap gap-2">
                 <Button>Vehículos Activos: {activeVehiculosCount}</Button>
-                <Button href='/parque-vehiculos/inactive'>
-                    Ver Vehículos Inactivos <HiOutlineArrowNarrowRight className="ml-2 h-5 w-5" />
-                </Button>
+                <Link to='/parque-vehiculos/inactive'>
+                    <Button>
+                        Ver Vehículos Inactivos <HiOutlineArrowNarrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                </Link>
             </div>
         </div>
     );
@@ -870,7 +959,23 @@ function ParqueVehiculosActivos() {
                                 </div>
                                 <div>
                                     <Label htmlFor="servicio">Servicio</Label>
-                                    <TextInput id="servicio" name="servicio" maxLength={30} value={formData.servicio} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa el Servicio.')} onInput={(e) => e.target.setCustomValidity('')}/>
+                                    <Select id="servicio" name="servicio" value={formData.servicio} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
+                                            <option value="">-Seleccione un servicio-</option>
+                                            {options.map(opt => (
+                                                <option key={opt.value} value={opt.label}>{opt.label}</option>
+                                            ))}
+                                    </Select> 
+                                    {/* <Select2 
+                                        className="basic-single "
+                                        classNamePrefix="select"
+                                        defaultValue={activeActividadesCda[0]}
+                                        onChange={(selectedOption) => setFormData({ ...formData, servicio: selectedOption.label })}
+                                        isSearchable={isSearchable}
+                                        name="color"
+                                        options={options}
+                                    />*/}
+
+                                    
                                 </div>
                                 <div>
                                     <Label htmlFor="indice_consumo_normado">Índice de Consumo Normado</Label>
@@ -886,7 +991,7 @@ function ParqueVehiculosActivos() {
                                 <div>
                                     <Label htmlFor="tipo_vehiculo_id">Tipo de Vehículo</Label>
                                     <Select id="tipo_vehiculo_id" name="tipo_vehiculo_id" value={formData.tipo_vehiculo_id} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
-                                            <option value="">-Seleccione un portador-</option>
+                                            <option value="">-Seleccione un vehículo-</option>
                                             {tipoVehiculos.map(tipoVehiculo => (
                                                 <option key={tipoVehiculo.id} value={tipoVehiculo.id}>{tipoVehiculo.nombre}</option>
                                             ))}
@@ -895,7 +1000,7 @@ function ParqueVehiculosActivos() {
                                 <div>
                                     <Label htmlFor="marca_id">Marca</Label>
                                     <Select id="marca_id" name="marca_id" value={formData.marca_id} onChange={handleMarcaChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
-                                            <option value="">-Seleccione un portador-</option>
+                                            <option value="">-Seleccione una marca-</option>
                                             {activeMarcas.map(marca => (
                                                 <option key={marca.id} value={marca.id}>{marca.nombre}</option>
                                             ))}
@@ -1005,7 +1110,22 @@ function ParqueVehiculosActivos() {
                                     </div>
                                     <div>
                                         <Label htmlFor="servicio">Servicio</Label>
-                                        <TextInput id="servicio" name="servicio" maxLength={30} value={formData.servicio} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, ingresa el nombre.')} onInput={(e) => e.target.setCustomValidity('')}/>
+                                        <Select id="servicio" name="servicio" value={formData.servicio} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
+                                            <option value="">-Seleccione un servicio-</option>
+                                            {options.map(opt => (
+                                                <option key={opt.value} value={opt.label}>{opt.label}</option>
+                                            ))}
+                                        </Select>
+                                        {/** 
+                                        <Select2
+                                        className="basic-single "
+                                        classNamePrefix="select"
+                                        value={options.find(option => option.label === formData.servicio)}
+                                        onChange={(selectedOption) => setFormData({ ...formData, servicio: selectedOption.label })}
+                                        
+                                        name="color"
+                                        options={options}
+                                    />*/}
                                     </div>
                                     <div>
                                         <Label htmlFor="indice_consumo_normado">Índice de Consumo Normado</Label>
@@ -1021,7 +1141,7 @@ function ParqueVehiculosActivos() {
                                     <div>
                                         <Label htmlFor="tipo_vehiculo_id">Tipo de Vehículo</Label>
                                         <Select id="tipo_vehiculo_id" name="tipo_vehiculo_id" value={formData.tipo_vehiculo_id} onChange={handleInputChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
-                                                <option value="">-Seleccione un portador-</option>
+                                                <option value="">-Seleccione un vehículo-</option>
                                                 {tipoVehiculos.map(tipoVehiculo => (
                                                     <option key={tipoVehiculo.id} value={tipoVehiculo.id}>{tipoVehiculo.nombre}</option>
                                                 ))}
@@ -1030,7 +1150,7 @@ function ParqueVehiculosActivos() {
                                     <div>
                                         <Label htmlFor="marca_id">Marca</Label>
                                         <Select id="marca_id" name="marca_id" value={formData.marca_id} onChange={handleMarcaChange} required onInvalid={(e) => e.target.setCustomValidity('Por favor, seleccione un elemento.')} onInput={(e) => e.target.setCustomValidity('')}>
-                                                <option value="">-Seleccione un portador-</option>
+                                                <option value="">-Seleccione una marca-</option>
                                                 {activeMarcas.map(marca => (
                                                     <option key={marca.id} value={marca.id}>{marca.nombre}</option>
                                                 ))}

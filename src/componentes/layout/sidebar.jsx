@@ -7,6 +7,7 @@ import { Sidebar } from 'flowbite-react';
 import { HiOutlineSwitchHorizontal , HiChartPie, HiClipboardList , HiChevronDoubleRight , HiCog, HiIdentification,HiAdjustments  } from 'react-icons/hi';
 import { customSidebar } from '../../utils/customThemes';
 import { renderTooltipSidebar } from '../../utils/renderWithTooltip';
+import { Link } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
 
 function SidebarComponent({ isOpen, onToggleSidebar }) {
@@ -126,22 +127,35 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
   }, [location]);
 
   
-    if(rol === 'ROLE_ADMIN'){
-      useEffect(() => {
-        if (location.pathname === '/parque-vehiculos/inactive' ) {
-          setOpenCollapse(1);
-          setSelectedItem('/parque-vehiculos-admin');
-        }
-      }, [location]);
-    }else{
-      useEffect(() => {
-        if (location.pathname ==='/parque-vehiculos/inactive' ) {
-          setOpenCollapse(2);
-          setSelectedItem('/parque-vehiculos');
-        }
-      }, [location]);
-    }
+  if(rol === 'ROLE_ADMIN'){
+    useEffect(() => {
+      if (location.pathname === '/parque-vehiculos/inactive' ) {
+        setOpenCollapse(1);
+        setSelectedItem('/parque-vehiculos-admin');
+      }
+    }, [location]);
+  }else{
+    useEffect(() => {
+      if (location.pathname ==='/parque-vehiculos/inactive' ) {
+        setOpenCollapse(2);
+        setSelectedItem('/parque-vehiculos');
+      }
+    }, [location]);
+  }
   
+  useEffect(() => {
+    if (location.pathname.startsWith('/tarjetas-magneticas')) {
+      setOpenCollapse(2);
+      setSelectedItem(location.pathname);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/asociar-actividad')) {
+      setOpenCollapse(2);
+      setSelectedItem(location.pathname);
+    }
+  }, [location]);
 
   const handleCollapseClick = (index) => {
     setOpenCollapse(openCollapse === index ? null : index);
@@ -179,7 +193,7 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
       <Sidebar.Items>
         <Sidebar.ItemGroup>
           
-          <Sidebar.Item href="#" icon={HiClipboardList }>
+          <Sidebar.Item href="/planificacion-cda" icon={HiClipboardList }>
             Planificación
           </Sidebar.Item>
           <Sidebar.Item href="#" icon={HiChevronDoubleRight}>
@@ -200,13 +214,33 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
               open={openCollapse === 2}
               onClick={() => handleCollapseClick(2)}
             >
-              <Sidebar.Item
-                href="/parque-vehiculos"
-                className={isItemSelected('/parque-vehiculos')}
-                onClick={() => handleItemClick('/parque-vehiculos')}
-              >
-                Parque de Vehículos
-              </Sidebar.Item>
+              <Link to="/asociar-actividad">
+                <Sidebar.Item
+                  
+                  className={isItemSelected('/asociar-actividad')}
+                  onClick={() => handleItemClick('/asociar-actividad')}
+                >
+                  {renderTooltipSidebar('Asociar Actividades CDA a la Unidad')}
+                </Sidebar.Item>
+              </Link>
+              <Link to="/parque-vehiculos">
+                <Sidebar.Item
+                  
+                  className={isItemSelected('/parque-vehiculos')}
+                  onClick={() => handleItemClick('/parque-vehiculos')}
+                >
+                  {renderTooltipSidebar('Parque de Vehículos')}
+                </Sidebar.Item>
+              </Link>
+              <Link to="/tarjetas-magneticas">
+                <Sidebar.Item
+                  
+                  className={isItemSelected('/tarjetas-magneticas')}
+                  onClick={() => handleItemClick('/tarjetas-magneticas')}
+                >
+                  {renderTooltipSidebar('Tarjetas Magnéticas')}
+                </Sidebar.Item>
+              </Link>
               <Sidebar.Item
                 //href="#portadores2"
                 //className={isItemSelected('#portadores2')}
@@ -228,128 +262,153 @@ function SidebarComponent({ isOpen, onToggleSidebar }) {
               onClick={() => handleCollapseClick(1)}
               
             >
-              <Sidebar.Item
-                href="/users"
-                className={isItemSelected('/users')}
-                onClick={() => handleItemClick('/users')}
-              >
-              {renderTooltipSidebar('Usuarios')} 
+              <Link to="/users">
+                <Sidebar.Item
+                  className={isItemSelected('/users')}
+                  onClick={() => handleItemClick('/users')}
+                >
+                {renderTooltipSidebar('Usuarios')}
 
-              </Sidebar.Item>
+                </Sidebar.Item>
+              </Link>
 
-              <Sidebar.Item
-                href="/unidades"
-                className={isItemSelected('/unidades')}
-                onClick={() => handleItemClick('/unidades')}
-              >
-              {renderTooltipSidebar('Unidades')} 
+              <Link to="/unidades">
+                <Sidebar.Item
+                  className={isItemSelected('/unidades')}
+                  onClick={() => handleItemClick('/unidades')}
+                >
+                {renderTooltipSidebar('Unidades')}
 
-              </Sidebar.Item>
+                </Sidebar.Item>
+              </Link>
 
-              <Sidebar.Item
-                href="/portadores"
-                className={isItemSelected('/portadores')}
-                onClick={() => handleItemClick('/portadores')}
-              >
-              {renderTooltipSidebar('Portadores Energéticos')} 
+              <Link to="/portadores">
+                <Sidebar.Item
+                  className={isItemSelected('/portadores')}
+                  onClick={() => handleItemClick('/portadores')}
+                >
+                {renderTooltipSidebar('Portadores Energéticos')} 
+              
+                </Sidebar.Item>
+              </Link>
+
+              <Link to="/tipo-portadores">
+                <Sidebar.Item
+                  className={isItemSelected('/tipo-portadores')}
+                  onClick={() => handleItemClick('/tipo-portadores')}
+                >
+                {renderTooltipSidebar('Tipos de Portadores Energéticos')} 
+
+                </Sidebar.Item>
+              </Link>
+
+              <Link to="/categorias-cda">  
+                <Sidebar.Item
+                  
+                  className={isItemSelected('/categorias-cda')}
+                  onClick={() => handleItemClick('/categorias-cda')}
+                >
+                {renderTooltipSidebar('Categorías de CDA')} 
+                  
+                </Sidebar.Item>
+              </Link>
+
+              <Link to="/actividades-cda">
+                <Sidebar.Item
+                  
+                  className={isItemSelected('/actividades-cda')}
+                  onClick={() => handleItemClick('/actividades-cda')}
+                >
+                {renderTooltipSidebar('Actividades de CDA')} 
+                  
+                </Sidebar.Item>
+              </Link>
+
+              <Link to="/unidades-medida">
+                <Sidebar.Item
+                  
+                  className={isItemSelected('/unidades-medida')}
+                  onClick={() => handleItemClick('/unidades-medida')}
+                >
+                {renderTooltipSidebar('Unidades de Medida')} 
+                  
+                </Sidebar.Item>
+              </Link>
+
+              <Link to="/tipos-vehiculos">
+                <Sidebar.Item
+                  
+                  className={isItemSelected('/tipos-vehiculos')}
+                  onClick={() => handleItemClick('/tipos-vehiculos')}
+                >
+                {renderTooltipSidebar('Tipos de Vehículos')} 
+                  
+                </Sidebar.Item>
+              </Link>
+
+              <Link to="/parque-vehiculos-admin">
+                <Sidebar.Item
+                  
+                  className={isItemSelected('/parque-vehiculos-admin')}
+                  onClick={() => handleItemClick('/parque-vehiculos-admin')}
+                >
+                {renderTooltipSidebar('Vehículos')} 
+                  
+                </Sidebar.Item>
+              </Link>
+
+              <Link to="/sector">
+                <Sidebar.Item
+                  
+                  className={isItemSelected('/sector')}
+                  onClick={() => handleItemClick('/sector')}
+                >
+                {renderTooltipSidebar('Sectores')} 
+                  
+                </Sidebar.Item>
+              </Link>
+
+              <Link to="/marcas">
+                <Sidebar.Item 
+                 
+                  className={isItemSelected('/marcas')}
+                  onClick={() => handleItemClick('/marcas')}
+
+                >
+                  {renderTooltipSidebar('Marcas')} 
+                
+                </Sidebar.Item>
+              </Link>
+
+              <Link to="/modelos">
+                <Sidebar.Item 
+                  
+                  className={isItemSelected('/modelos')}
+                  onClick={() => handleItemClick('/modelos')}
+                >
+                {renderTooltipSidebar('Modelos')} 
+                </Sidebar.Item>
+              </Link>
+
+              <Link to="/provincias">
+                <Sidebar.Item 
+                  
+                  className={isItemSelected('/provincias')}
+                  onClick={() => handleItemClick('/provincias')}
+                >
+                  {renderTooltipSidebar('Provincias')} 
+                </Sidebar.Item>
+              </Link>
             
-              </Sidebar.Item>
-              <Sidebar.Item
-                href="/tipo-portadores"
-                className={isItemSelected('/tipo-portadores')}
-                onClick={() => handleItemClick('/tipo-portadores')}
-              >
-              {renderTooltipSidebar('Tipos de Portadores Energéticos')} 
-
-              </Sidebar.Item>
-              <Sidebar.Item
-                href="/categorias-cda"
-                className={isItemSelected('/categorias-cda')}
-                onClick={() => handleItemClick('/categorias-cda')}
-              >
-              {renderTooltipSidebar('Categorías de CDA')} 
-                
-              </Sidebar.Item>
-              
-              <Sidebar.Item
-                href="/actividades-cda"
-                className={isItemSelected('/actividades-cda')}
-                onClick={() => handleItemClick('/actividades-cda')}
-              >
-              {renderTooltipSidebar('Actividades de CDA')} 
-                
-              </Sidebar.Item>
-
-              <Sidebar.Item
-                href="/unidades-medida"
-                className={isItemSelected('/unidades-medida')}
-                onClick={() => handleItemClick('/unidades-medida')}
-              >
-              {renderTooltipSidebar('Unidades de Medida')} 
-                
-              </Sidebar.Item>
-
-              <Sidebar.Item
-                href="/tipos-vehiculos"
-                className={isItemSelected('/tipos-vehiculos')}
-                onClick={() => handleItemClick('/tipos-vehiculos')}
-              >
-              {renderTooltipSidebar('Tipos de Vehículos')} 
-                
-              </Sidebar.Item>
-
-              <Sidebar.Item
-                href="/parque-vehiculos-admin"
-                className={isItemSelected('/parque-vehiculos-admin')}
-                onClick={() => handleItemClick('/parque-vehiculos-admin')}
-              >
-              {renderTooltipSidebar('Vehículos')} 
-                
-              </Sidebar.Item>
-
-              <Sidebar.Item
-                href="/sector"
-                className={isItemSelected('/sector')}
-                onClick={() => handleItemClick('/sector')}
-              >
-              {renderTooltipSidebar('Sectores')} 
-                
-              </Sidebar.Item>
-
-              <Sidebar.Item 
-                href="/marcas"
-                className={isItemSelected('/marcas')}
-                onClick={() => handleItemClick('/marcas')}
-
-              >
-                {renderTooltipSidebar('Marcas')} 
-              
-              </Sidebar.Item>
-
-              <Sidebar.Item 
-                href="/modelos"
-                className={isItemSelected('/modelos')}
-                onClick={() => handleItemClick('/modelos')}
-              >
-              {renderTooltipSidebar('Modelos')} 
-              </Sidebar.Item>
-
-              <Sidebar.Item 
-                href="/provincias"
-                className={isItemSelected('/provincias')}
-                onClick={() => handleItemClick('/provincias')}
-              >
-                {renderTooltipSidebar('Provincias')} 
-              </Sidebar.Item>
-
-              <Sidebar.Item 
-                href="/municipios"
-                className={isItemSelected('/municipios')}
-                onClick={() => handleItemClick('/municipios')}
-              >
-                {renderTooltipSidebar(' Municipios')} 
-              </Sidebar.Item>
-
+              <Link to="/municipios">
+                <Sidebar.Item 
+                  
+                  className={isItemSelected('/municipios')}
+                  onClick={() => handleItemClick('/municipios')}
+                >
+                  {renderTooltipSidebar(' Municipios')} 
+                </Sidebar.Item>
+              </Link>
             </Sidebar.Collapse>
             : null
           }

@@ -18,6 +18,7 @@ import '../styles.css'
 import { TableActionsItemsInactive } from '../../../utils/TableActions';
 import ConfirmacionModal from '../../../utils/ConfirmacionModal';
 import ToastNotification from '../../../utils/ToastNotification';
+import { Link } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
 
 function ParqueVehiculosInactivos() {
@@ -265,13 +266,17 @@ function ParqueVehiculosInactivos() {
                 <Button>Vehículos Inactivos: {inactiveVehiculosCount}</Button>
                 {
                     rol === 'ROLE_ADMIN' ?
-                    <Button href='/parque-vehiculos-admin'>
-                        <HiOutlineArrowNarrowLeft className="mr-2 h-5 w-5" />Ver Vehículos Activos
-                    </Button>
+                    <Link to='/parque-vehiculos-admin'>
+                        <Button>
+                            <HiOutlineArrowNarrowLeft className="mr-2 h-5 w-5" />Ver Vehículos Activos
+                        </Button>
+                    </Link>
                 : 
-                    <Button href='/parque-vehiculos'>
-                        <HiOutlineArrowNarrowLeft className="mr-2 h-5 w-5" />Ver Vehículos Activos
-                    </Button>
+                    <Link to='/parque-vehiculos'>
+                        <Button href='/parque-vehiculos'>
+                            <HiOutlineArrowNarrowLeft className="mr-2 h-5 w-5" />Ver Vehículos Activos
+                        </Button>
+                    </Link>
                 }
             </div>
         </div>

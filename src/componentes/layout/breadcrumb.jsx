@@ -5,6 +5,8 @@ import { Breadcrumb } from "flowbite-react";
 import { HiHome } from "react-icons/hi";
 import { useLocation } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode';
+import { Link } from 'react-router-dom';
+
 function BreadCrumbComponent() {
   const location = useLocation();
 const token = localStorage.getItem('token');
@@ -31,6 +33,7 @@ const token = localStorage.getItem('token');
     case '/users/inactive':
       return (
         <Breadcrumb aria-label="Default breadcrumb example">
+          
           <Breadcrumb.Item href="/" icon={HiHome}>
             Inicio
           </Breadcrumb.Item>
@@ -135,37 +138,50 @@ const token = localStorage.getItem('token');
         case '/parque-vehiculos-admin':
           return (
             <Breadcrumb aria-label="Default breadcrumb example">
-              <Breadcrumb.Item href="/" icon={HiHome}>
-                Inicio
+              <Breadcrumb.Item icon={HiHome}>
+              <Link to='/'>Inicio</Link>
               </Breadcrumb.Item>
-              <Breadcrumb.Item href="/parque-vehiculos-admin">Vehículos</Breadcrumb.Item>
+              <Breadcrumb.Item><Link to='//parque-vehiculos-admin'>Vehículos</Link></Breadcrumb.Item>
             </Breadcrumb>
           );
         case '/parque-vehiculos':
           return (
             <Breadcrumb aria-label="Default breadcrumb example">
-              <Breadcrumb.Item href="/" icon={HiHome}>
-                Inicio
+              <Breadcrumb.Item  icon={HiHome}>
+              <Link to='/'>Inicio</Link>
               </Breadcrumb.Item>
-              <Breadcrumb.Item href="/parque-vehiculos">Parque de  Vehículos</Breadcrumb.Item>
+              <Breadcrumb.Item ><Link to='/parque-vehiculos'>Parque de  Vehículos</Link></Breadcrumb.Item>
             </Breadcrumb>
           );
-          case '/parque-vehiculos/inactive':
-            return (
-              <Breadcrumb aria-label="Default breadcrumb example">
-                <Breadcrumb.Item href="/" icon={HiHome}>
-                  Inicio
+        case '/parque-vehiculos/inactive':
+          return (
+            <Breadcrumb aria-label="Default breadcrumb example">
+              <Breadcrumb.Item icon={HiHome}>
+              <Link to='/'>Inicio</Link>
+              </Breadcrumb.Item>
+              {
+                  rol === 'ROLE_ADMIN' ?
+                  <Breadcrumb.Item><Link to='/parque-vehiculos-admin'>Vehículos</Link></Breadcrumb.Item>
+              : 
+                  <Breadcrumb.Item ><Link to='/parque-vehiculos'>Parque de  Vehículos</Link></Breadcrumb.Item>
+              }
+              
+              <Breadcrumb.Item><Link to='/parque-vehiculos/inactive'>Vehículos Inactivos</Link></Breadcrumb.Item>
+            </Breadcrumb>
+          );
+        case '/tarjetas-magneticas':
+          return (
+            <Breadcrumb aria-label="Default breadcrumb example">
+              
+                <Breadcrumb.Item icon={HiHome}>
+                  <Link to='/'>Inicio</Link>
                 </Breadcrumb.Item>
-                {
-                    rol === 'ROLE_ADMIN' ?
-                    <Breadcrumb.Item href="/parque-vehiculos-admin">Vehículos</Breadcrumb.Item>
-                : 
-                    <Breadcrumb.Item href="/parque-vehiculos">Parque de  Vehículos</Breadcrumb.Item>
-                }
-                
-                <Breadcrumb.Item href="/parque-vehiculos/inactive">Vehículos Inactivos</Breadcrumb.Item>
-              </Breadcrumb>
-            );
+              
+
+                <Breadcrumb.Item ><Link to='/tarjetas-magneticas'>Tarjetas Magnéticas</Link></Breadcrumb.Item>
+              
+            </Breadcrumb>
+          );  
         case '/marcas':
           return (
             <Breadcrumb aria-label="Default breadcrumb example">
@@ -240,7 +256,20 @@ const token = localStorage.getItem('token');
             <Breadcrumb.Item href="/unidades">Unidades</Breadcrumb.Item>
             <Breadcrumb.Item href="/unidades/inactive">Inactivas</Breadcrumb.Item>
           </Breadcrumb>
-        );    
+        );
+        case '/asociar-actividad':
+          return (
+            <Breadcrumb aria-label="Default breadcrumb example">
+              
+                <Breadcrumb.Item icon={HiHome}>
+                  <Link to='/'>Inicio</Link>
+                </Breadcrumb.Item>
+              
+
+                <Breadcrumb.Item ><Link to='/asociar-actividad'>Asociar Actividades a la Unidad</Link></Breadcrumb.Item>
+              
+            </Breadcrumb>
+          );      
         default:
         return (
           <Breadcrumb aria-label="Default breadcrumb example">
