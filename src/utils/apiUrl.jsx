@@ -1,1 +1,1 @@
-export const apiUrl = "https://mower-drainable-freebase.ngrok-free.dev/";
+export const apiUrl = "https://mower-drainable-freebase.ngrok-free.dev";
