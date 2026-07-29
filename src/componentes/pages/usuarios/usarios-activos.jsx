@@ -80,6 +80,7 @@ function UsariosActivos() {
     useEffect(() => {
         const token = localStorage.getItem('token');
         axios.get(`${apiUrl}/unidades`, {
+            baseURL: "...",
             headers: {
                 'Authorization': `Bearer ${token}`
             }
